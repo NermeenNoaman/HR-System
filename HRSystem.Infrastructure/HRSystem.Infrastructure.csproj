@@ -18,9 +18,4 @@
     <ProjectReference Include="..\HRSystem.BaseLibrary\HRSystem.BaseLibrary.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Contracts\" />
-    <Folder Include="Implementations\" />
-  </ItemGroup>
-
 </Project>
