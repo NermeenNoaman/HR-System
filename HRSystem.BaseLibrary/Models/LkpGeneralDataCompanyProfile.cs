@@ -13,7 +13,7 @@ public partial class LkpGeneralDataCompanyProfile
     public int CompanyProfileId { get; set; }
     [Required(ErrorMessage = "Name is required")]
     [StringLength(150)]
-    public string Name { get; set; }
+    public string NameEn { get; set; }
 
     [Required(ErrorMessage = "Insurance number is required")]
     [StringLength(100)]

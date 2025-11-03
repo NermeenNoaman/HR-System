@@ -38,7 +38,7 @@ namespace HRSystem_Wizer_.Controllers
                 // هنا بنسجل المستخدم
                 var result = await _authService.RegisterAsync(request);
 
-                // في البروجيكتات الحقيقية أحياناً التسجيل بدون توليد توكن
+               
                 // ممكن نعمله Login بعد التسجيل بدل ما نرجع توكن مباشرة
                 return Ok(result);
             }
