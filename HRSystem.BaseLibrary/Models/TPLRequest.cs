@@ -28,8 +28,8 @@ public partial class TPLRequest
 
     public int? ApprovedBy { get; set; }
 
-    [Column(TypeName = "datetime")]
-    public DateTime submission_date { get; set; }
+    [Column(TypeName = "DateOnly")]
+    public DateOnly submission_date { get; set; }
 
     [InverseProperty("request")]
     public virtual TPLLeave TPLLeave { get; set; }
@@ -41,4 +41,6 @@ public partial class TPLRequest
     [ForeignKey("leave_type_id")]
     [InverseProperty("TPLRequests")]
     public virtual LKPLeaveType leave_type { get; set; }
+
+    
 }

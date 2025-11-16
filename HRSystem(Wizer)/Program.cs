@@ -1,18 +1,18 @@
 // To use the HRSystemContext class
 using HRSystem.BaseLibrary;
+using HRSystem.BaseLibrary.Profiles;
+using HRSystem.Core.Services;
+using HRSystem.Infrastructure.Contracts;
 using HRSystem.Infrastructure.Data;
+using HRSystem.Infrastructure.Implementations;
 using HRSystem.Infrastructure.Implementations.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Text;
-using HRSystem.BaseLibrary.Profiles;
-using HRSystem.Infrastructure.Contracts;
-using HRSystem.Infrastructure.Implementations;
 
 
 namespace HRSystem_Wizer_
@@ -38,7 +38,12 @@ namespace HRSystem_Wizer_
             builder.Services.AddScoped<IBranchRepository, BranchRepository>();
             builder.Services.AddScoped<IHRDepartmentRepository, HRDepartmentRepository>();
             builder.Services.AddScoped<IUserRepository, UserRepository>();
-
+            builder.Services.AddScoped<ITPLRequestRepository, RequestRepository>();
+            builder.Services.AddScoped<ITPLLeaveBalanceRepository, TPLLeaveBalanceRepository>();
+            builder.Services.AddScoped<ITPLLeaveRepository, TPLLeaveRepository>();
+            builder.Services.AddScoped<ILKPLeaveTypeRepository, LKPLeaveTypeRepository>();
+            builder.Services.AddScoped<ITPLEmployeeRepository, TPLEmployeeRepository>();
+            builder.Services.AddScoped<ILeaveManagementService, LeaveManagementService>();
             // Add services to the container.
             builder.Services.AddControllers();
 
