@@ -29,6 +29,9 @@ public partial class TPLHRNeedRequest
     [Column(TypeName = "datetime")]
     public DateTime CreatedDate { get; set; }
 
+    [Column(TypeName = "datetime")]
+    public DateTime? UpdatedDate { get; set; }
+
     [ForeignKey("DepartmentId")]
     [InverseProperty("TPLHRNeedRequests")]
     public virtual LkpHRDepartment Department { get; set; }

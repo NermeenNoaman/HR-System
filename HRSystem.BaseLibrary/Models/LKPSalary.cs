@@ -29,6 +29,12 @@ public partial class LKPSalary
 
     public DateOnly PayDate { get; set; }
 
+    [Column(TypeName = "datetime")]
+    public DateTime CreatedDate { get; set; }
+
+    [Column(TypeName = "datetime")]
+    public DateTime? UpdatedDate { get; set; }
+
     [ForeignKey("EmployeeID")]
     [InverseProperty("LKPSalaries")]
     public virtual TPLEmployee Employee { get; set; }

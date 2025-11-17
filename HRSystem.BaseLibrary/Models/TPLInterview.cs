@@ -26,6 +26,12 @@ public partial class TPLInterview
 
     public int InterviewerID { get; set; }
 
+    [Column(TypeName = "datetime")]
+    public DateTime CreatedDate { get; set; }
+
+    [Column(TypeName = "datetime")]
+    public DateTime? UpdatedDate { get; set; }
+
     [ForeignKey("CandidateID")]
     [InverseProperty("TPLInterviews")]
     public virtual TPLCandidate Candidate { get; set; }

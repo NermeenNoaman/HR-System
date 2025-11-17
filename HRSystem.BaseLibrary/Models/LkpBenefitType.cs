@@ -20,6 +20,14 @@ public partial class LkpBenefitType
 
     public bool IsActive { get; set; }
 
+    [Column(TypeName = "datetime")]
+    public DateTime CreatedDate { get; set; }
+
+    [Column(TypeName = "datetime")]
+    public DateTime? UpdatedDate { get; set; }
+
+    public bool IsDeleted { get; set; }
+
     [InverseProperty("BenefitType")]
     public virtual ICollection<TPLBenefitsCompensation> TPLBenefitsCompensations { get; set; } = new List<TPLBenefitsCompensation>();
 }

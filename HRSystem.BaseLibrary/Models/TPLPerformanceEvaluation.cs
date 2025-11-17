@@ -24,6 +24,12 @@ public partial class TPLPerformanceEvaluation
 
     public int CriteriaID { get; set; }
 
+    [Column(TypeName = "datetime")]
+    public DateTime CreatedDate { get; set; }
+
+    [Column(TypeName = "datetime")]
+    public DateTime? UpdatedDate { get; set; }
+
     [ForeignKey("CriteriaID")]
     [InverseProperty("TPLPerformanceEvaluations")]
     public virtual TPLEvaluationCriterion Criteria { get; set; }

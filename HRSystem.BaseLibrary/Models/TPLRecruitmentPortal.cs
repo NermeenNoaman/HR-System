@@ -22,6 +22,12 @@ public partial class TPLRecruitmentPortal
     [StringLength(200)]
     public string Notes { get; set; }
 
+    [Column(TypeName = "datetime")]
+    public DateTime CreatedDate { get; set; }
+
+    [Column(TypeName = "datetime")]
+    public DateTime? UpdatedDate { get; set; }
+
     [ForeignKey("HRNeedID")]
     [InverseProperty("TPLRecruitmentPortals")]
     public virtual TPLHRNeedRequest HRNeed { get; set; }

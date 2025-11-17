@@ -26,6 +26,12 @@ public partial class TPLSelfServiceRequest
 
     public int? ApprovedBy { get; set; }
 
+    [Column(TypeName = "datetime")]
+    public DateTime CreatedDate { get; set; }
+
+    [Column(TypeName = "datetime")]
+    public DateTime? UpdatedDate { get; set; }
+
     [ForeignKey("EmployeeID")]
     [InverseProperty("TPLSelfServiceRequests")]
     public virtual TPLEmployee Employee { get; set; }

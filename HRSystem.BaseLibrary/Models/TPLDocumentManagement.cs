@@ -27,6 +27,12 @@ public partial class TPLDocumentManagement
     [StringLength(200)]
     public string FilePath { get; set; }
 
+    [Column(TypeName = "datetime")]
+    public DateTime CreatedDate { get; set; }
+
+    [Column(TypeName = "datetime")]
+    public DateTime? UpdatedDate { get; set; }
+
     [ForeignKey("EmployeeID")]
     [InverseProperty("TPLDocumentManagements")]
     public virtual TPLEmployee Employee { get; set; }

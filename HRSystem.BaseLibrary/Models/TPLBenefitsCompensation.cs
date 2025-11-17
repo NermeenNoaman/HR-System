@@ -24,6 +24,12 @@ public partial class TPLBenefitsCompensation
     [Column(TypeName = "decimal(10, 2)")]
     public decimal? Value { get; set; }
 
+    [Column(TypeName = "datetime")]
+    public DateTime CreatedDate { get; set; }
+
+    [Column(TypeName = "datetime")]
+    public DateTime? UpdatedDate { get; set; }
+
     [ForeignKey("BenefitTypeID")]
     [InverseProperty("TPLBenefitsCompensations")]
     public virtual LkpBenefitType BenefitType { get; set; }

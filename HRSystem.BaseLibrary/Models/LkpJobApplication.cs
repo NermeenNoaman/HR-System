@@ -38,6 +38,9 @@ public partial class LkpJobApplication
 
     public int? CV_ID { get; set; }
 
+    [Column(TypeName = "datetime")]
+    public DateTime? UpdatedDate { get; set; }
+
     [ForeignKey("CV_ID")]
     [InverseProperty("LkpJobApplications")]
     public virtual TPLCVBank CV { get; set; }
