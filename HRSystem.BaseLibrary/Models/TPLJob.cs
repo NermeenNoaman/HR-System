@@ -27,6 +27,14 @@ public partial class TPLJob
     [StringLength(50)]
     public string Status { get; set; }
 
+    [Column(TypeName = "datetime")]
+    public DateTime CreatedDate { get; set; }
+
+    [Column(TypeName = "datetime")]
+    public DateTime? UpdatedDate { get; set; }
+
+    public bool IsDeleted { get; set; }
+
     [InverseProperty("Job")]
     public virtual ICollection<TPLEmployee> TPLEmployees { get; set; } = new List<TPLEmployee>();
 }

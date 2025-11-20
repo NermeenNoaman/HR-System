@@ -19,6 +19,12 @@ public partial class TPLCandidate
 
     public int JobApplicationId { get; set; }
 
+    [Column(TypeName = "datetime")]
+    public DateTime CreatedDate { get; set; }
+
+    [Column(TypeName = "datetime")]
+    public DateTime? UpdatedDate { get; set; }
+
     [ForeignKey("JobApplicationId")]
     [InverseProperty("TPLCandidates")]
     public virtual LkpJobApplication JobApplication { get; set; }

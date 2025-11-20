@@ -36,6 +36,11 @@ public partial class TPLCVBank
     [StringLength(200)]
     public string Notes { get; set; }
 
+    [Column(TypeName = "datetime")]
+    public DateTime? UpdatedDate { get; set; }
+
+    public bool IsDeleted { get; set; }
+
     [InverseProperty("CV")]
     public virtual ICollection<LkpJobApplication> LkpJobApplications { get; set; } = new List<LkpJobApplication>();
 }

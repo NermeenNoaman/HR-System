@@ -22,6 +22,14 @@ public partial class TPLEvaluationCriterion
     [Column(TypeName = "decimal(5, 2)")]
     public decimal Weight { get; set; }
 
+    [Column(TypeName = "datetime")]
+    public DateTime CreatedDate { get; set; }
+
+    [Column(TypeName = "datetime")]
+    public DateTime? UpdatedDate { get; set; }
+
+    public bool IsDeleted { get; set; }
+
     [InverseProperty("Criteria")]
     public virtual ICollection<TPLPerformanceEvaluation> TPLPerformanceEvaluations { get; set; } = new List<TPLPerformanceEvaluation>();
 }

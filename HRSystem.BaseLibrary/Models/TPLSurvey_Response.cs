@@ -21,6 +21,12 @@ public partial class TPLSurvey_Response
 
     public int Rating { get; set; }
 
+    [Column(TypeName = "datetime")]
+    public DateTime CreatedDate { get; set; }
+
+    [Column(TypeName = "datetime")]
+    public DateTime? UpdatedDate { get; set; }
+
     [ForeignKey("EmployeeID")]
     [InverseProperty("TPLSurvey_Responses")]
     public virtual TPLEmployee Employee { get; set; }
