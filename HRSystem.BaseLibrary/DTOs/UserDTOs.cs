@@ -50,9 +50,6 @@ namespace HRSystem.BaseLibrary.DTOs
         [Compare("Password", ErrorMessage = "Passwords do not match.")]
         public string ConfirmPassword { get; set; }
 
-        
-        [StringLength(50, ErrorMessage = "Role name cannot exceed 50 characters.")]
-        public string Role { get; set; } = "Employee";
     }
 
     // =================================================================================

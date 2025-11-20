@@ -42,34 +42,34 @@ namespace HRSystem.Infrastructure.Implementations
                 {
                     throw new Exception("Employee not found. Provide a valid EmployeeId.");
                 }
-                int deptid = _context.TPLEmployees
-                    .Where(e => e.EmployeeID == request.EmployeeId)
-                    .Select(e => e.DepartmentID)
-                    .FirstOrDefault();
-                string depNameEn = _context.LkpHRDepartments
-                        .Where(d => d.DepartmentId == deptid)
-                        .Select(d => d.NameEn)
-                        .FirstOrDefault();
+                //int deptid = _context.TPLEmployees
+                //    .Where(e => e.EmployeeID == request.EmployeeId)
+                //    .Select(e => e.DepartmentID)
+                //    .FirstOrDefault();
+                //string depNameEn = _context.LkpHRDepartments
+                //        .Where(d => d.DepartmentId == deptid)
+                //        .Select(d => d.NameEn)
+                //        .FirstOrDefault();
 
-                if (depNameEn.Equals("Human Resources"))
-                    { 
-                        request.Role = "HR";
-                }
-                else if (depNameEn.Equals("General Administration"))
-                    {
-                        request.Role = "admin";
-                }
-                else
-                {
-                    request.Role = "Employee";
-                }
+                //if (depNameEn.Equals("Human Resources"))
+                //    { 
+                //        request.Role = "HR";
+                //}
+                //else if (depNameEn.Equals("General Administration"))
+                //    {
+                //        request.Role = "admin";
+                //}
+                //else
+                //{
+                //    request.Role = "Employee";
+                //}
+                
 
-                var newUser = new TPLUser
+            var newUser = new TPLUser
                         {
                             EmployeeID = request.EmployeeId,
                             Username = request.Username,
-                            Role = request.Role
-                    
+                            Role = "Employee"
                     };
 
                 var hashedPassword = new PasswordHasher<TPLUser>()
