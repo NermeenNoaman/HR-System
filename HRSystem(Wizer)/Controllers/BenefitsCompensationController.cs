@@ -1,9 +1,11 @@
 using HRSystem.BaseLibrary.DTOs;
 using HRSystem.Infrastructure.Contracts;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 
 [Route("api/[controller]")]
 [ApiController]
+[Authorize]
 public class BenefitsCompensationController : ControllerBase
     {
         private readonly IBenefitsCompensationService _service;
@@ -15,6 +17,7 @@ public class BenefitsCompensationController : ControllerBase
 
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<BenefitsCompensationReadDto>))]
+        
         public async Task<IActionResult> GetAll()
         {
             var dtos = await _service.GetAllAsync();
