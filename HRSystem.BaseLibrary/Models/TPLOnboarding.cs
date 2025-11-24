@@ -15,9 +15,9 @@ public partial class TPLOnboarding
 
     public int EmployeeID { get; set; }
 
-    public DateOnly StartDate { get; set; }
+    public DateTime StartDate { get; set; }
 
-    public DateOnly EndDate { get; set; }
+    public DateTime EndDate { get; set; }
 
     [Required]
     [StringLength(100)]

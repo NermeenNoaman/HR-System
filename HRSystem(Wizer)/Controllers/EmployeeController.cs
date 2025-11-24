@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 [Route("api/[controller]")]
 [ApiController]
-[Authorize(Roles = "HR,Admin")] 
+[Authorize(Roles = "HR,admin")] 
 public class EmployeeController : ControllerBase
 {
     private readonly ITPLEmployeeRepository _employeeRepo;
@@ -36,8 +36,9 @@ public class EmployeeController : ControllerBase
 
         
         var createdEntity = await _employeeRepo.AddAsync(entity);
+        await _employeeRepo.SaveChangesAsync();
 
-        
+
         var createdDto = _mapper.Map<EmployeeReadDto>(createdEntity);
 
         
@@ -54,7 +55,6 @@ public class EmployeeController : ControllerBase
     {
         
         var entity = await _employeeRepo.GetEmployeeContactInfoAsync(id);
-
         if (entity == null)
         {
             return NotFound(new { Message = $"Employee with ID {id} not found." });
@@ -88,6 +88,8 @@ public class EmployeeController : ControllerBase
 
         
         await _employeeRepo.UpdateAsync(existingEntity);
+        await _employeeRepo.SaveChangesAsync();
+
 
         return NoContent(); // 204 No Content for successful update
     }
@@ -101,13 +103,14 @@ public class EmployeeController : ControllerBase
     public async Task<IActionResult> DeleteEmployee(int id)
     {
         var entity = await _employeeRepo.GetByIdAsync(id);
-
         if (entity == null)
         {
             return NotFound(new { Message = $"Employee with ID {id} not found." });
         }
 
         await _employeeRepo.DeleteAsync(entity);
+        await _employeeRepo.SaveChangesAsync();
+
 
         return NoContent();
     }

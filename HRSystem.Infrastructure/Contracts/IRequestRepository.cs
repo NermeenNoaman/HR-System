@@ -9,7 +9,7 @@ namespace HRSystem.Infrastructure.Contracts
     public interface ITPLRequestRepository : IGenericRepository<TPLRequest>
     {
         // Logic for checking overlap with existing requests (Important Logic)
-        Task<bool> HasConflictingRequestAsync(int employeeId, DateOnly startDate, DateOnly endDate);
+        Task<bool> HasConflictingRequestAsync(int employeeId, DateTime startDate, DateTime endDate);
 
         // Logic for Step 3: Updating the request status (Approve/Reject)
         // approvedById is the ID of the manager/approver

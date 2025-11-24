@@ -474,6 +474,8 @@ public partial class HRSystemContext : DbContext
                 .HasForeignKey(r => r.UserId)
                 .OnDelete(DeleteBehavior.Cascade);
         });
+
+
     }
 
     partial void OnModelCreatingPartial(ModelBuilder modelBuilder);

@@ -33,16 +33,16 @@ public class LeaveManagementService : ILeaveManagementService
     }
 
     // Helper function to calculate working days (Excludes Friday and Saturday)
-    private int CalculateWorkingDays(DateOnly startDate, DateOnly endDate)
+    private int CalculateWorkingDays(DateTime startDate, DateTime endDate)
     {
-        if (startDate > endDate)
+        if (startDate.Date > endDate.Date)
         {
             throw new ArgumentException("Start Date cannot be after End Date.");
         }
 
         int workingDays = 0;
         // Iterate through each day in the requested range
-        for (var date = startDate; date <= endDate; date = date.AddDays(1))
+        for (var date = startDate.Date; date <= endDate; date = date.AddDays(1))
         {
             // Check if the day is NOT Friday (6) or Saturday (0) (Assuming Sunday=0)
             if (date.DayOfWeek != DayOfWeek.Friday && date.DayOfWeek != DayOfWeek.Saturday)
@@ -56,19 +56,27 @@ public class LeaveManagementService : ILeaveManagementService
     // Step 1 & 2 Implementation: Submits the request and runs automated checks
     public async Task<RequestReadDto> ProcessNewLeaveRequestAsync(LeaveRequestCreateDto requestDto)
     {
-     
-        DateOnly startDate = DateOnly.FromDateTime(requestDto.StartDate.Date);
-        DateOnly endDate = DateOnly.FromDateTime(requestDto.EndDate.Date);
+        // *** NEW CHECK FOR FOREIGN KEY INTEGRITY ***
+        // 1. Check if the submitting Employee ID exists in the DB before proceeding
+        var submittingEmployee = await _employeeRepo.GetByIdAsync(requestDto.EmployeeId);
+        if (submittingEmployee == null)
+        {
+            // This confirms the DB's current state and throws an error if the ID is truly missing.
+            throw new UnauthorizedAccessException($"Error: Employee ID {requestDto.EmployeeId} is not valid or not found in the system.");
+        }
+        // ********************************************
+
+        DateTime startDate = requestDto.StartDate.Date;
+        DateTime endDate = requestDto.EndDate.Date;
         // 1. Calculate the actual number of requested working days
-        // Note: Assuming DTO properties are now correctly DateOnly
-        int requestedDays = CalculateWorkingDays(startDate, endDate);
+        int requestedDays = CalculateWorkingDays(startDate.Date, endDate.Date);
         if (requestedDays <= 0)
         {
             throw new ArgumentException("Leave request must include at least one working day.");
         }
 
         // 2. Check for overlapping requests (Important Logic)
-        bool isConflicting = await _requestRepo.HasConflictingRequestAsync(requestDto.EmployeeId, startDate, endDate);
+        bool isConflicting = await _requestRepo.HasConflictingRequestAsync(requestDto. EmployeeId,startDate,endDate);
         if (isConflicting)
         {
             throw new InvalidOperationException("This employee already has an Approved or Pending leave request for this period.");
@@ -110,11 +118,11 @@ public class LeaveManagementService : ILeaveManagementService
         {
             employee_id = requestDto.EmployeeId,
             leave_type_id = requestDto.LeaveTypeId,
-            start_date = startDate,
-            end_date = endDate,
+            start_date = startDate.Date,
+            end_date = endDate.Date,
             number_of_days = requestedDays,
             status = initialStatus,
-            submission_date = DateOnly.MaxValue, // Assuming submission date is today
+            submission_date = DateTime.MaxValue, // Assuming submission date is today
             // Reason should be mapped from DTO if available
         };
 

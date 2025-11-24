@@ -15,11 +15,11 @@ public partial class TPLAttendance
 
     public int EmployeeID { get; set; }
 
-    public DateOnly Date { get; set; }
+    public DateTime Date { get; set; }
 
-    public TimeOnly? CheckIn { get; set; }
+    public DateTime? CheckIn { get; set; }
 
-    public TimeOnly? CheckOut { get; set; }
+    public DateTime? CheckOut { get; set; }
 
     [Required]
     [StringLength(50)]

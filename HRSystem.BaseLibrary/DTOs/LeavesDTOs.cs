@@ -20,8 +20,8 @@ namespace HRSystem.BaseLibrary.DTOs
 
         // Duration and dates
         public int Quantity { get; set; } // Number of days taken
-        public DateOnly StartDate { get; set; }
-        public DateOnly EndDate { get; set; }
+        public DateTime StartDate { get; set; }
+        public DateTime EndDate { get; set; }
 
         // Link to the request that generated this log entry
         public int RequestId { get; set; }

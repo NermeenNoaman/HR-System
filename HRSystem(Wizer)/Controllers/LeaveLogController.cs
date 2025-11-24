@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 [Route("api/[controller]")]
 [ApiController]
-[Authorize(Roles = "HR,Admin,Manager")] 
+[Authorize(Roles = "HR,admin")] 
 public class LeaveLogController : ControllerBase
 {
     private readonly ITPLLeaveRepository _leaveLogRepo;

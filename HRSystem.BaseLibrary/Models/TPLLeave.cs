@@ -20,9 +20,9 @@ public partial class TPLLeave
 
     public int Quantity { get; set; }
 
-    public DateOnly StartDate { get; set; }
+    public DateTime StartDate { get; set; }
 
-    public DateOnly EndDate { get; set; }
+    public DateTime EndDate { get; set; }
 
     public int request_id { get; set; }
 

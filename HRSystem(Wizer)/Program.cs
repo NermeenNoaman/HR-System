@@ -44,6 +44,11 @@ namespace HRSystem_Wizer_
             builder.Services.AddScoped<ILKPLeaveTypeRepository, LKPLeaveTypeRepository>();
             builder.Services.AddScoped<ITPLEmployeeRepository, TPLEmployeeRepository>();
             builder.Services.AddScoped<ILeaveManagementService, LeaveManagementService>();
+            builder.Services.AddScoped<IAttendanceRepository, TPLAttendanceRepository>();
+            builder.Services.AddScoped<IPermissionRepository, TPLPermissionRepository>();
+            builder.Services.AddScoped<IPermissionTypeRepository, LKPPermissionTypeRepository>();
+            builder.Services.AddScoped<IPermissionManagementService, PermissionManagementService>();
+
             // Add services to the container.
             builder.Services.AddControllers();
 

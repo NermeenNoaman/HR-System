@@ -21,15 +21,21 @@ public class LeaveRequestController : ControllerBase
     }
 
     // Helper to get the current User ID from the JWT Token
-    private int GetCurrentUserId()
+    // Helper to get the current Employee ID from the JWT Token
+    private int GetCurrentUserId() // You can change the name to GetCurrentEmployeeId() for greater clarity
     {
-        var userIdClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
-        if (int.TryParse(userIdClaim, out int userId))
+        // 1. Find the specific Claim "EmployeeID"
+        var employeeIdClaim = User.FindFirst("EmployeeID")?.Value;
+
+        // 2. Try converting it to a proper number (Employee ID)
+        if (int.TryParse(employeeIdClaim, out int employeeId))
         {
-            return userId;
+          
+            return employeeId;
         }
-        // Handle case where user ID is missing or invalid
-        throw new UnauthorizedAccessException("User ID not found in token.");
+
+        // 3. If it fails, throw an error because the current user does not have a valid Employee ID
+        throw new UnauthorizedAccessException("Employee ID is missing or invalid in the token. The user may not be associated with a valid employee profile.");
     }
 
     // ----------------------------------------------------------------------
@@ -64,13 +70,14 @@ public class LeaveRequestController : ControllerBase
         {
             return BadRequest(new { Message = ex.Message }); // Handles overlap checks
         }
+
     }
 
     // ----------------------------------------------------------------------
     // 2. Manager Action: Approve Request (Step 3 & 4 Logic)
     // ----------------------------------------------------------------------
     [HttpPost("approve/{requestId}")]
-    [Authorize(Roles = "Manager,HR")] // Only Managers or HR can approve
+    [Authorize(Roles = "admin,HR")] // Only Managers or HR can approve
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> ApproveRequest(int requestId)
@@ -91,7 +98,7 @@ public class LeaveRequestController : ControllerBase
     // 3. Manager Action: Reject Request (Step 3 Logic)
     // ----------------------------------------------------------------------
     [HttpPost("reject/{requestId}")]
-    [Authorize(Roles = "Manager,HR")]
+    [Authorize(Roles = "admin,HR")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> RejectRequest(int requestId)
