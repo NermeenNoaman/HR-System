@@ -1,5 +1,6 @@
 using HRSystem.BaseLibrary.DTOs;
 using HRSystem.Infrastructure.Contracts;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 [Route("api/[controller]")]
@@ -14,6 +15,7 @@ public class BenefitTypeController : ControllerBase
         }
 
         [HttpGet]
+        [Authorize(Roles = "admin ,HR")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<BenefitTypeReadDto>))]
         public async Task<IActionResult> GetAll()
         {
@@ -22,6 +24,7 @@ public class BenefitTypeController : ControllerBase
         }
 
         [HttpGet("{id}")]
+        [Authorize(Roles = "admin ,HR")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(BenefitTypeReadDto))]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> GetById(int id)
@@ -35,6 +38,7 @@ public class BenefitTypeController : ControllerBase
         }
 
         [HttpPost]
+        [Authorize(Roles = "admin")]
         [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(BenefitTypeReadDto))]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> Create([FromBody] BenefitTypeCreateDto dto)
@@ -49,6 +53,7 @@ public class BenefitTypeController : ControllerBase
         }
 
         [HttpPut("{id}")]
+        [Authorize(Roles = "admin")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -74,6 +79,7 @@ public class BenefitTypeController : ControllerBase
         }
 
         [HttpDelete("{id}")]
+        [Authorize(Roles = "admin")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> Delete(int id)

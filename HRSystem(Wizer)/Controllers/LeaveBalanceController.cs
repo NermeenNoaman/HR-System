@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 [Route("api/[controller]")]
 [ApiController]
-[Authorize(Roles = "HR,Admin,Manager")] // HR/Admin allocates, Manager may view balances
+[Authorize] // HR/Admin allocates, Manager may view balances
 public class LeaveBalanceController : ControllerBase
 {
     private readonly ITPLLeaveBalanceRepository _balanceRepo;

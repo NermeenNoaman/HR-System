@@ -29,6 +29,7 @@ public partial class TPLBenefitsCompensation
 
     [Column(TypeName = "datetime")]
     public DateTime? UpdatedDate { get; set; }
+    public bool IsDeleted { get; set; }
 
     [ForeignKey("BenefitTypeID")]
     [InverseProperty("TPLBenefitsCompensations")]

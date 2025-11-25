@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 [Route("api/[controller]")]
 [ApiController]
-[Authorize(Roles = "HR,Admin")] 
+
 public class EmployeeController : ControllerBase
 {
     private readonly ITPLEmployeeRepository _employeeRepo;

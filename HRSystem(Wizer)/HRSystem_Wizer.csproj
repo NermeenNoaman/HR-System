@@ -5,6 +5,7 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <RootNamespace>HRSystem_Wizer_</RootNamespace>
+    <UserSecretsId>7c44cf9d-e0fd-4fd8-ac8d-3267dbedcd19</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>

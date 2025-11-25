@@ -1,90 +1,96 @@
 using HRSystem.BaseLibrary.DTOs;
 using HRSystem.Infrastructure.Contracts;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 
 [Route("api/[controller]")]
 [ApiController]
 public class CandidateController : ControllerBase
     {
-        private readonly ICandidateService _service;
+    private readonly ICandidateService _service;
 
-        public CandidateController(ICandidateService service)
+    public CandidateController(ICandidateService service)
+    {
+        _service = service;
+    }
+
+    [HttpGet]
+    [Authorize(Roles = "admin ,HR")]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<CandidateReadDto>))]
+    public async Task<IActionResult> GetAll()
+    {
+        var dtos = await _service.GetAllAsync();
+        return Ok(dtos);
+    }
+
+    [HttpGet("{id}")]
+    [Authorize(Roles = "admin ,HR")]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(CandidateReadDto))]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> GetById(int id)
+    {
+        var dto = await _service.GetByIdAsync(id);
+        if (dto == null)
         {
-            _service = service;
+            return NotFound(new { Message = $"Candidate with ID {id} not found." });
+        }
+        return Ok(dto);
+    }
+
+    [HttpPost]
+    [Authorize(Roles = "admin")]
+    [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(CandidateReadDto))]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public async Task<IActionResult> Create([FromBody] CandidateCreateDto dto)
+    {
+        if (!ModelState.IsValid)
+        {
+            return BadRequest(ModelState);
         }
 
-        [HttpGet]
-        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<CandidateReadDto>))]
-        public async Task<IActionResult> GetAll()
+        var createdDto = await _service.CreateAsync(dto);
+        return CreatedAtAction(nameof(GetById), new { id = createdDto.CandidateID }, createdDto);
+    }
+
+    [HttpPut("{id}")]
+    [Authorize(Roles = "admin")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public async Task<IActionResult> Update(int id, [FromBody] CandidateUpdateDto dto)
+    {
+        if (id != dto.CandidateID)
         {
-            var dtos = await _service.GetAllAsync();
-            return Ok(dtos);
+            return BadRequest(new { Message = "ID mismatch between route and body." });
         }
 
-        [HttpGet("{id}")]
-        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(CandidateReadDto))]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> GetById(int id)
+        if (!ModelState.IsValid)
         {
-            var dto = await _service.GetByIdAsync(id);
-            if (dto == null)
-            {
-                return NotFound(new { Message = $"Candidate with ID {id} not found." });
-            }
-            return Ok(dto);
+            return BadRequest(ModelState);
         }
 
-        [HttpPost]
-        [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(CandidateReadDto))]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> Create([FromBody] CandidateCreateDto dto)
+        var result = await _service.UpdateAsync(id, dto);
+        if (!result)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
-            var createdDto = await _service.CreateAsync(dto);
-            return CreatedAtAction(nameof(GetById), new { id = createdDto.CandidateID }, createdDto);
+            return NotFound(new { Message = $"Candidate with ID {id} not found for update." });
         }
 
-        [HttpPut("{id}")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> Update(int id, [FromBody] CandidateUpdateDto dto)
+        return Ok(new { Message = "Candidate updated successfully." });
+    }
+
+    [HttpDelete("{id}")]
+    [Authorize(Roles = "admin")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> Delete(int id)
+    {
+        var result = await _service.DeleteAsync(id);
+        if (!result)
         {
-            if (id != dto.CandidateID)
-            {
-                return BadRequest(new { Message = "ID mismatch between route and body." });
-            }
-
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
-            var result = await _service.UpdateAsync(id, dto);
-            if (!result)
-            {
-                return NotFound(new { Message = $"Candidate with ID {id} not found for update." });
-            }
-
-            return Ok(new { Message = "Candidate updated successfully." });
+            return NotFound(new { Message = $"Candidate with ID {id} not found." });
         }
 
-        [HttpDelete("{id}")]
-        [ProducesResponseType(StatusCodes.Status204NoContent)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> Delete(int id)
-        {
-            var result = await _service.DeleteAsync(id);
-            if (!result)
-            {
-                return NotFound(new { Message = $"Candidate with ID {id} not found." });
-            }
-
-            return NoContent();
-        }
+        return NoContent();
+    }
 }
 

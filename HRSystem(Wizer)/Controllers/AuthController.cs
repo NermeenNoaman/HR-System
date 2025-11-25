@@ -63,7 +63,7 @@ namespace HRSystem_Wizer_.Controllers
             }
             catch (Exception ex)
             {
-                return Unauthorized(new { message = ex.Message });
+                return BadRequest(new { message = ex.Message , innerError = ex.InnerException?.Message });
             }
         }
 
