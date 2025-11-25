@@ -1,11 +1,12 @@
+using HRSystem.Infrastructure.Contracts;
+using HRSystem.Infrastructure.Data;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Security.AccessControl;
 using System.Threading.Tasks;
-using HRSystem.Infrastructure.Contracts;
-using HRSystem.Infrastructure.Data;
-using Microsoft.EntityFrameworkCore;
 
 namespace HRSystem.Infrastructure.Implementations
 {
@@ -47,6 +48,7 @@ namespace HRSystem.Infrastructure.Implementations
         public virtual async Task<T> AddAsync(T entity)
         {
             await _dbSet.AddAsync(entity);
+            await SaveChangesAsync();
             return entity;
         }
 

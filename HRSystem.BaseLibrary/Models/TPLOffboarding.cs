@@ -15,7 +15,7 @@ public partial class TPLOffboarding
 
     public int EmployeeID { get; set; }
 
-    public DateOnly ResignationDate { get; set; }
+    public DateTime ResignationDate { get; set; }
 
     [Required]
     [StringLength(200)]

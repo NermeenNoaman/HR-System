@@ -16,7 +16,7 @@ namespace HRSystem.BaseLibrary.DTOs
         public string Name { get; set; }
         public string Email { get; set; }
         public string Phone { get; set; }
-        public DateOnly HireDate { get; set; }
+        public DateTime HireDate { get; set; }
 
         // Foreign Keys (usually mapped to names in final output, but kept for clarity)
         public int JobId { get; set; }
@@ -50,7 +50,7 @@ namespace HRSystem.BaseLibrary.DTOs
         public string Phone { get; set; }
 
         [Required(ErrorMessage = "Hire Date is required.")]
-        public DateOnly HireDate { get; set; }
+        public DateTime HireDate { get; set; }
 
         [Required(ErrorMessage = "Job ID is required.")]
         public int JobId { get; set; }

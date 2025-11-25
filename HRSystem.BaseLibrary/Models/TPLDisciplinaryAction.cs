@@ -14,7 +14,7 @@ public partial class TPLDisciplinaryAction
 
     public int EmployeeID { get; set; }
 
-    public DateOnly Date { get; set; }
+    public DateTime Date { get; set; }
 
     [Required]
     [StringLength(100)]

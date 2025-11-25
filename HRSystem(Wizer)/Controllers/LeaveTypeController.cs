@@ -7,10 +7,11 @@ using HRSystem.Infrastructure.Contracts; // لـ ILKPLeaveTypeRepository
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
+using static System.Net.Mime.MediaTypeNames;
 
 [Route("api/[controller]")]
 [ApiController]
-[Authorize(Roles = "HR,Admin")] // User only: HR or administrators to access type innovations
+[Authorize(Roles = "HR,admin")] // User only: HR or administrators to access type innovations
 public class LeaveTypeController : ControllerBase
 {
     private readonly ILKPLeaveTypeRepository _leaveTypeRepo;
@@ -68,6 +69,7 @@ public class LeaveTypeController : ControllerBase
 
         // 2. Adding the entity to the database
         var createdEntity = await _leaveTypeRepo.AddAsync(entity);
+         await _leaveTypeRepo.SaveChangesAsync();
 
         // 3. Convert the resulting Entity to ReadDto for response
         var createdDto = _mapper.Map<LeaveTypeReadDto>(createdEntity);
@@ -91,15 +93,14 @@ public class LeaveTypeController : ControllerBase
         }
 
         var existingEntity = await _leaveTypeRepo.GetByIdAsync(id);
+        await _leaveTypeRepo.SaveChangesAsync();
         if (existingEntity == null)
         {
             return NotFound(new { Message = $"Leave Type with ID {id} not found for update." });
         }
 
-        // 1. تطبيق التحديثات من DTO على الكيان الموجود
         _mapper.Map(dto, existingEntity);
 
-        // 2. حفظ التغييرات في قاعدة البيانات
         await _leaveTypeRepo.UpdateAsync(existingEntity);
 
         return NoContent(); // 204 No Content for successful update
@@ -120,8 +121,8 @@ public class LeaveTypeController : ControllerBase
             return NotFound(new { Message = $"Leave Type with ID {id} not found." });
         }
 
-        // ملاحظة: يُفضل دائماً عمل "Soft Delete" (تعطيل/IsActive=false) بدلاً من الحذف الفعلي
         await _leaveTypeRepo.DeleteAsync(entity);
+        await _leaveTypeRepo.SaveChangesAsync();
 
         return NoContent(); // 204 No Content for successful deletion
     }

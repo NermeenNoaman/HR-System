@@ -113,6 +113,8 @@ namespace HRSystem.BaseLibrary.Profiles // Using the specified Profiles namespac
                 .ForMember(dest => dest.BalanceId, opt => opt.MapFrom(src => src.BalanceId))
                 .ForAllMembers(opt => opt.Condition((src, dest, srcMember) => srcMember != null));
 
+            
+
             // =========================================================================
             // 7. DTOs for LKPLeaveType (Leave Type - CRUD) - NEW MAPPING
             // =========================================================================
@@ -149,7 +151,7 @@ namespace HRSystem.BaseLibrary.Profiles // Using the specified Profiles namespac
             // 10. Responsible for the process of converting data between DTOs and Entities
             // =========================================================================
 
-            // في HRSystem.BaseLibrary/Profiles/HRMappingProfile.cs
+            // HRSystem.BaseLibrary/Profiles/HRMappingProfile.cs
 
             // ... (Your existing Mappings for LeaveType and LeaveBalance)
 
@@ -293,6 +295,36 @@ namespace HRSystem.BaseLibrary.Profiles // Using the specified Profiles namespac
             CreateMap<InterviewCreateDto, TPLInterview>();
             CreateMap<InterviewUpdateDto, TPLInterview>();
 
+
+            // =========================================================================
+            // 12. PermissionType MAPPINGS
+            // =========================================================================
+
+            // Create DTO to Entity
+            CreateMap<LKPPermissionTypeCreateDTO, LKPPermissionType>();
+
+            // Update DTO to Entity
+            CreateMap<LKPPermissionTypeUpdateDTO, LKPPermissionType>();
+
+            // Entity to Read DTO
+            CreateMap<LKPPermissionType, LKPPermissionTypeReadDTO>();
+
+            // =========================================================================
+            // 13. Permission MAPPINGS
+            // =========================================================================
+            // Create DTO to Entity
+            CreateMap<PermissionCreateDto, TPLPermission>()
+                .ForMember(dest => dest.permission_id, opt => opt.Ignore())
+                .ForMember(dest => dest.request_date, opt => opt.MapFrom(src => DateTime.Now)) // Set submission time
+                .ForMember(dest => dest.status, opt => opt.MapFrom(src => "Pending")); // Default status
+
+            // Update DTO to Entity (for partial updates/manager status changes)
+            CreateMap<TPLPermissionUpdateDTO, TPLPermission>();
+
+            // Entity to Read DTO
+            CreateMap<TPLPermission, PermissionReadDto>()
+                .ForMember(dest => dest.PermissionId, opt => opt.MapFrom(src => src.permission_id));
+            // Note: EmployeeName and PermissionTypeName need to be resolved in the Service/Controller
         }
     }
 }

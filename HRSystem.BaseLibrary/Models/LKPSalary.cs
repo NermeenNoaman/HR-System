@@ -27,7 +27,7 @@ public partial class LKPSalary
     [Column(TypeName = "decimal(10, 2)")]
     public decimal NetSalary { get; set; }
 
-    public DateOnly PayDate { get; set; }
+    public DateTime PayDate { get; set; }
 
     [Column(TypeName = "datetime")]
     public DateTime CreatedDate { get; set; }

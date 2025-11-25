@@ -1,6 +1,4 @@
-﻿// In HRSystem(Wizer)/Controllers/LeaveBalanceController.cs
-
-using AutoMapper;
+﻿using AutoMapper;
 using HRSystem.BaseLibrary.DTOs;
 using HRSystem.BaseLibrary.Models;
 using HRSystem.Infrastructure.Contracts;
@@ -16,7 +14,6 @@ public class LeaveBalanceController : ControllerBase
     private readonly ITPLLeaveBalanceRepository _balanceRepo;
     private readonly IMapper _mapper;
 
-    // حقن الـ Repository والـ AutoMapper
     public LeaveBalanceController(ITPLLeaveBalanceRepository balanceRepo, IMapper mapper)
     {
         _balanceRepo = balanceRepo;
@@ -46,6 +43,7 @@ public class LeaveBalanceController : ControllerBase
         // 3. Add to Database
         var createdEntity = await _balanceRepo.AddAsync(entity);
         var createdDto = _mapper.Map<LeaveBalanceReadDto>(createdEntity);
+        await _balanceRepo.SaveChangesAsync();
 
         return CreatedAtAction(nameof(GetBalanceByEmployeeId), new { employeeId = createdDto.EmployeeId }, createdDto);
     }
@@ -69,7 +67,7 @@ public class LeaveBalanceController : ControllerBase
     // 3. PUT: Adjust Balance Manually (Internal HR Action)
     // ----------------------------------------------------------------------
     [HttpPut("{balanceId}")]
-    [Authorize(Roles = "HR,Admin")]
+    [Authorize(Roles = "HR,admin")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> AdjustBalance(int balanceId, [FromBody] LeaveBalanceInternalUpdateDto dto)
@@ -89,6 +87,7 @@ public class LeaveBalanceController : ControllerBase
         _mapper.Map(dto, existingBalance);
 
         await _balanceRepo.UpdateAsync(existingBalance);
+        await _balanceRepo.SaveChangesAsync();
 
         return NoContent();
     }

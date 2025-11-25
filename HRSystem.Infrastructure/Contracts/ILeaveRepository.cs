@@ -8,6 +8,6 @@ namespace HRSystem.Infrastructure.Contracts
     public interface ITPLLeaveRepository : IGenericRepository<TPLLeave>
     {
         // Logic for Step 4: Record the finalized leave in the log table
-        Task<TPLLeave> LogApprovedLeaveAsync(int employeeId, int leaveTypeId, int quantity, DateOnly startDate, DateOnly endDate, int requestId);
+        Task<TPLLeave> LogApprovedLeaveAsync(int employeeId, int leaveTypeId, int quantity, DateTime startDate, DateTime endDate, int requestId);
     }
 }

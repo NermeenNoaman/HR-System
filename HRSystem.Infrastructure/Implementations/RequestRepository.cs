@@ -19,7 +19,7 @@ public class RequestRepository : GenericRepository<TPLRequest>, ITPLRequestRepos
     }
 
     // Implementation of the overlap check
-    public async Task<bool> HasConflictingRequestAsync(int employeeId, DateOnly startDate, DateOnly endDate)
+    public async Task<bool> HasConflictingRequestAsync(int employeeId, DateTime startDate, DateTime endDate)
     {
         // Check for any existing Approved or Pending requests for the employee
         return await _context.Set<TPLRequest>()
@@ -46,4 +46,5 @@ public class RequestRepository : GenericRepository<TPLRequest>, ITPLRequestRepos
 
         return true;
     }
+
 }

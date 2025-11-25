@@ -26,7 +26,7 @@ public partial class TPLEmployee
     [StringLength(20)]
     public string Phone { get; set; }
 
-    public DateOnly HireDate { get; set; }
+    public DateTime HireDate { get; set; }
 
     public int JobID { get; set; }
 

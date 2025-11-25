@@ -19,9 +19,9 @@ public partial class TPLTraining
 
     public string Description { get; set; }
 
-    public DateOnly StartDate { get; set; }
+    public DateTime StartDate { get; set; }
 
-    public DateOnly EndDate { get; set; }
+    public DateTime EndDate { get; set; }
 
     [InverseProperty("Training")]
     public virtual ICollection<TPLEmployee_Training> TPLEmployee_Trainings { get; set; } = new List<TPLEmployee_Training>();

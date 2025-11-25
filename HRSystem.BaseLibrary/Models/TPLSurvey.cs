@@ -19,7 +19,7 @@ public partial class TPLSurvey
 
     public string Description { get; set; }
 
-    public DateOnly CreatedDate { get; set; }
+    public DateTime CreatedDate { get; set; }
 
     [Column(TypeName = "datetime")]
     public DateTime? UpdatedDate { get; set; }

@@ -81,6 +81,13 @@ namespace HRSystem_Wizer_
             builder.Services.AddScoped<ICandidateService, CandidateService>();
             builder.Services.AddScoped<IInterviewService, InterviewService>();
 
+            builder.Services.AddScoped<IAttendanceRepository, TPLAttendanceRepository>();
+            builder.Services.AddScoped<IPermissionRepository, TPLPermissionRepository>();
+            builder.Services.AddScoped<IPermissionTypeRepository, LKPPermissionTypeRepository>();
+            builder.Services.AddScoped<IPermissionManagementService, PermissionManagementService>();
+
+            
+            
             // Add services to the container.
             builder.Services.AddControllers();
 

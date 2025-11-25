@@ -14,8 +14,8 @@ namespace HRSystem.BaseLibrary.DTOs
         // This property will be populated by AutoMapper from the Navigation Property
         public string LeaveTypeName { get; set; }
 
-        public DateOnly StartDate { get; set; }
-        public DateOnly EndDate { get; set; }
+        public DateTime StartDate { get; set; }
+        public DateTime EndDate { get; set; }
         public int NumberOfDays { get; set; }
         public string Status { get; set; } // Current Status (Pending, Approved, Rejected)
     }

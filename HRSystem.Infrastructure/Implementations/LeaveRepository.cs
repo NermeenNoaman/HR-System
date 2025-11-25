@@ -16,7 +16,7 @@ public class TPLLeaveRepository : GenericRepository<TPLLeave>, ITPLLeaveReposito
     }
 
     // Implementation of logging the approved leave (Step 4)
-    public async Task<TPLLeave> LogApprovedLeaveAsync(int employeeId, int leaveTypeId, int quantity, DateOnly startDate, DateOnly endDate, int requestId)
+    public async Task<TPLLeave> LogApprovedLeaveAsync(int employeeId, int leaveTypeId, int quantity, DateTime startDate, DateTime endDate, int requestId)
     {
         var newLeaveLog = new TPLLeave
         {

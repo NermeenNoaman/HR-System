@@ -16,9 +16,9 @@ public partial class TPLRequest
 
     public int leave_type_id { get; set; }
 
-    public DateOnly start_date { get; set; }
+    public DateTime start_date { get; set; }
 
-    public DateOnly end_date { get; set; }
+    public DateTime end_date { get; set; }
 
     public int number_of_days { get; set; }
 
@@ -28,8 +28,8 @@ public partial class TPLRequest
 
     public int? ApprovedBy { get; set; }
 
-    [Column(TypeName = "DateOnly")]
-    public DateOnly submission_date { get; set; }
+    [Column(TypeName = "DateTime")]
+    public DateTime submission_date { get; set; }
 
     [InverseProperty("request")]
     public virtual TPLLeave TPLLeave { get; set; }

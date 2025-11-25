@@ -17,9 +17,9 @@ public partial class TPLProject
     [StringLength(100)]
     public string ProjectName { get; set; }
 
-    public DateOnly StartDate { get; set; }
+    public DateTime StartDate { get; set; }
 
-    public DateOnly? EndDate { get; set; }
+    public DateTime? EndDate { get; set; }
 
     public int? ManagerID { get; set; }
 
