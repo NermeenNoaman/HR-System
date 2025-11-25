@@ -24,6 +24,36 @@ public class EmployeeController : ControllerBase
     }
 
     // ----------------------------------------------------------------------
+    // 0. GET: Get All Active Employees (NEW ENDPOINT)
+    // ----------------------------------------------------------------------
+    [HttpGet]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<EmployeeReadDto>))]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    public async Task<IActionResult> GetAllEmployees()
+    {
+        try
+        {
+            // Assuming your ITPLEmployeeRepository has GetAllActiveAsync() or GetAllAsync()
+            // We will use GetAllAsync() and let the Mapper/Client filter the status,
+            // unless GetAllActiveAsync() is already implemented and preferred.
+
+            // Note: For HR systems, it's common to only show employees with EmploymentStatus = 'Active'.
+            // Assuming GetAllAsync() is the most robust way to start.
+            var entities = await _employeeRepo.GetAllAsync();
+
+            var dtos = _mapper.Map<IEnumerable<EmployeeReadDto>>(entities);
+            return Ok(dtos);
+        }
+        catch (Exception ex)
+        {
+            // Log error if logging is injected (assuming it is based on your other controllers)
+            // _logger.LogError(ex, "Error retrieving all employees."); 
+            return StatusCode(500, "An error occurred while retrieving the employee list.");
+        }
+    }
+
+
+    // ----------------------------------------------------------------------
     // 1. POST: Create New Employee (HR Action)
     // ----------------------------------------------------------------------
     [HttpPost]

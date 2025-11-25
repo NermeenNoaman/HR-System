@@ -172,6 +172,10 @@ public partial class HRSystemContext : DbContext
 
             entity.Property(e => e.AttendanceID).ValueGeneratedOnAdd();
 
+            entity.Property(e => e.CheckInLatitude).HasColumnType("decimal(10, 8)");
+
+            entity.Property(e => e.CheckInLongitude).HasColumnType("decimal(10, 8)");
+
             entity.HasOne(d => d.Employee).WithMany(p => p.TPLAttendances)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_TPLAttendance_TPLEmployee");

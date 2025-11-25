@@ -21,6 +21,13 @@ public partial class TPLAttendance
 
     public DateTime? CheckOut { get; set; }
 
+    // --- ADDING NEW COLUMNS FOR GEO-FENCING ---
+    [Column(TypeName = "decimal(10, 8)")] // Precision for coordinates
+    public decimal? CheckInLatitude { get; set; }
+
+    [Column(TypeName = "decimal(10, 8)")]
+    public decimal? CheckInLongitude { get; set; }
+
     [Required]
     [StringLength(50)]
     public string Status { get; set; }
