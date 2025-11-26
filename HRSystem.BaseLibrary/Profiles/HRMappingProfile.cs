@@ -325,6 +325,86 @@ namespace HRSystem.BaseLibrary.Profiles // Using the specified Profiles namespac
             CreateMap<TPLPermission, PermissionReadDto>()
                 .ForMember(dest => dest.PermissionId, opt => opt.MapFrom(src => src.permission_id));
             // Note: EmployeeName and PermissionTypeName need to be resolved in the Service/Controller
+
+            // =========================================================================
+            // 14. DTOs for TPLAttendance (Attendance Module) - NEW MAPPING
+            // =========================================================================
+
+            // 1. Create Mapping: DTO to Entity (Input to DB)
+            CreateMap<AttendanceCreateDto, TPLAttendance>()
+                .ForMember(dest => dest.AttendanceID, opt => opt.Ignore())
+                .ForMember(dest => dest.CheckInLatitude, opt => opt.MapFrom(src => src.CheckInLatitude))
+                .ForMember(dest => dest.CheckInLongitude, opt => opt.MapFrom(src => src.CheckInLongitude))
+                .ForMember(dest => dest.EmployeeID, opt => opt.MapFrom(src => src.EmployeeID))
+
+                // Note: The Controller overrides EmployeeID from the Token, but mapping must be defined.
+                .ForMember(dest => dest.CheckIn, opt => opt.MapFrom(src => src.CheckIn))
+                .ForMember(dest => dest.CheckOut, opt => opt.MapFrom(src => src.CheckOut));
+
+
+            // 2. Read Mapping: Entity to ReadDto (DB to Output)
+            CreateMap<TPLAttendance, AttendanceReadDto>()
+                .ForMember(dest => dest.AttendanceID, opt => opt.MapFrom(src => src.AttendanceID));
+            // Add additional mapping for EmployeeName if the navigation property is loaded in the repository
+            // .ForMember(dest => dest.EmployeeName, opt => opt.MapFrom(src => src.Employee.Name));
+
+            // 3. Update Mapping (لـ TPLAttendanceUpdateDTO)
+            CreateMap<TPLAttendanceUpdateDTO, TPLAttendance>();
+
+            // =========================================================================
+            // 15. DTOs for TPLTraining (Training Course Management)
+            // =========================================================
+
+            // 1. Create Mapping: DTO to Entity
+            CreateMap<TPLTrainingCreateDTO, TPLTraining>()
+                .ForMember(dest => dest.TrainingID, opt => opt.Ignore()); // Ignore the PK for creation
+
+            // 2. Read Mapping: Entity to Read DTO
+            CreateMap<TPLTraining, TPLTrainingReadDTO>();
+
+            // 3. Update Mapping: DTO to Entity
+            CreateMap<TPLTrainingUpdateDTO, TPLTraining>();
+
+            // =========================================================================
+            // 16. DTOs for TPLEmployee_Training (Employee Enrollment and Results)
+            // =========================================================================
+
+            // 1. Create Mapping: DTO to Entity (Enrollment)
+            CreateMap<TPLEmployeeTrainingCreateDTO, TPLEmployee_Training>()
+                // Note: The PK (EmployeeID, TrainingID) is the composite key.
+                .ForMember(dest => dest.CompletionStatus, opt => opt.MapFrom(src => src.CompletionStatus));
+            // The service layer handles existence check, but mapping is direct here.
+
+            // 2. Read Mapping: Entity to Read DTO
+            CreateMap<TPLEmployee_Training, TPLEmployeeTrainingReadDTO>();
+
+            // 3. Update Mapping: DTO to Entity (for score/status updates)
+            CreateMap<TPLEmployeeTrainingUpdateDTO, TPLEmployee_Training>()
+                // Ignore the PKs because they are used for finding the record, not updating the key itself
+                .ForMember(dest => dest.EmployeeID, opt => opt.Ignore())
+                .ForMember(dest => dest.TrainingID, opt => opt.Ignore())
+                // This mapping allows the partial update of Score and CompletionStatus
+                .ForAllMembers(opt => opt.Condition((src, dest, srcMember) => srcMember != null)); // Apply changes only if the source value is not null
+
+            // =========================================================================
+            // 17. TPLProject MAPPINGS (Master Data) 
+            // =========================================================================
+            CreateMap<TPLProjectCreateDTO, TPLProject>()
+                .ForMember(dest => dest.ProjectID, opt => opt.Ignore());
+
+            CreateMap<TPLProjectUpdateDTO, TPLProject>();
+
+            CreateMap<TPLProject, TPLProjectReadDTO>();
+
+            // =========================================================================
+            // 18. TPLProjectAssignment MAPPINGS (Junction Table) 
+            // =========================================================================
+            CreateMap<TPLProjectAssignmentCreateDTO, TPLProject_Assignment>()
+               .ForMember(dest => dest.assignment_id, opt => opt.Ignore())
+               .ForAllMembers(opt => opt.Condition((src, dest, srcMember) => srcMember != null));
+            CreateMap<TPLProjectAssignmentUpdateDTO, TPLProject_Assignment>();
+            CreateMap<TPLProject_Assignment, TPLProjectAssignmentReadDTO>();
+
         }
     }
 }

@@ -85,6 +85,10 @@ namespace HRSystem_Wizer_
             builder.Services.AddScoped<IPermissionRepository, TPLPermissionRepository>();
             builder.Services.AddScoped<IPermissionTypeRepository, LKPPermissionTypeRepository>();
             builder.Services.AddScoped<IPermissionManagementService, PermissionManagementService>();
+            builder.Services.AddScoped<ITPLTrainingRepository, TPLTrainingRepository>();
+            builder.Services.AddScoped<ITPLEmployeeTrainingRepository, TPLEmployeeTrainingRepository>();
+            builder.Services.AddScoped<ITPLProjectRepository, TPLProjectRepository>();
+            builder.Services.AddScoped<ITPLProjectAssignmentRepository, TPLProjectAssignmentRepository>();
 
             
             
