@@ -39,7 +39,7 @@ public class SurveyResponseController : ControllerBase
     }
 
     [HttpPost]
-    [Authorize(Roles="admin,HR,Employee")]
+    [Authorize]
     [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(SurveyResponseReadDto))]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> Create([FromBody] SurveyResponseCreateDto dto)
@@ -54,7 +54,7 @@ public class SurveyResponseController : ControllerBase
     }
 
     [HttpPut("{id}")]
-    [Authorize(Roles = "admin,HR,Employee")]
+    [Authorize ]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]

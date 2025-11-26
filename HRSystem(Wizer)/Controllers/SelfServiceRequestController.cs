@@ -24,7 +24,7 @@ public class SelfServiceRequestController : ControllerBase
     }
 
     [HttpGet("{id}")]
-    [Authorize(Roles = "admin,HR,Employee")]
+    [Authorize]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(SelfServiceRequestReadDto))]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetById(int id)
@@ -38,7 +38,7 @@ public class SelfServiceRequestController : ControllerBase
     }
 
     [HttpPost]
-    [Authorize(Roles = "admin,HR,Employee")]
+    [Authorize]
     [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(SelfServiceRequestReadDto))]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> Create([FromBody] SelfServiceRequestCreateDto dto)
@@ -53,7 +53,7 @@ public class SelfServiceRequestController : ControllerBase
     }
 
     [HttpPut("{id}")]
-    [Authorize(Roles = "admin,HR,Employee")]
+    [Authorize]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
