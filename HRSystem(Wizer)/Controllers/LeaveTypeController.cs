@@ -60,6 +60,7 @@ public class LeaveTypeController : ControllerBase
     // 3. POST: Create New Leave Type
     // ----------------------------------------------------------------------
     [HttpPost]
+    [Authorize(Roles = "admin")]
     [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(LeaveTypeReadDto))]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> CreateLeaveType([FromBody] LeaveTypeCreateDto dto)
@@ -110,6 +111,7 @@ public class LeaveTypeController : ControllerBase
     // 5. DELETE: Delete (or deactivate) Leave Type
     // ----------------------------------------------------------------------
     [HttpDelete("{id}")]
+    [Authorize(Roles = "admin")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> DeleteLeaveType(int id)

@@ -24,6 +24,7 @@ public class LeaveBalanceController : ControllerBase
     // 1. POST: Allocate Initial Balance (HR/Admin Action)
     // ----------------------------------------------------------------------
     [HttpPost]
+    [Authorize(Roles = "HR,admin")]
     [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(LeaveBalanceReadDto))]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> AllocateBalance([FromBody] LeaveBalanceCreateDto dto)
@@ -52,6 +53,7 @@ public class LeaveBalanceController : ControllerBase
     // 2. GET: Get Balances for a Specific Employee (Employee/Manager View)
     // ----------------------------------------------------------------------
     [HttpGet("employee/{employeeId}")]
+    [Authorize]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<LeaveBalanceReadDto>))]
     public async Task<IActionResult> GetBalanceByEmployeeId(int employeeId)
     {

@@ -4,12 +4,13 @@ using AutoMapper;
 using HRSystem.BaseLibrary.DTOs;
 using HRSystem.Infrastructure.Contracts;
 using Microsoft.AspNetCore.Authorization;
+using System.Security.Claims;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 
 [Route("api/[controller]")]
 [ApiController]
-[Authorize(Roles = "HR,admin")] 
+[Authorize] 
 public class LeaveLogController : ControllerBase
 {
     private readonly ITPLLeaveRepository _leaveLogRepo;
@@ -25,6 +26,7 @@ public class LeaveLogController : ControllerBase
     // 1. GET: Get all approved leave records (HR/Admin view)
     // ----------------------------------------------------------------------
     [HttpGet]
+    [Authorize(Roles = "admin,HR")]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<LeaveLogReadDto>))]
     public async Task<IActionResult> GetAllLeaveLogs()
     {
@@ -37,6 +39,7 @@ public class LeaveLogController : ControllerBase
     // 2. GET: Get leave history for a specific employee
     // ----------------------------------------------------------------------
     [HttpGet("employee/{employeeId}")]
+    [Authorize]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<LeaveLogReadDto>))]
     public async Task<IActionResult> GetEmployeeLeaveHistory(int employeeId)
     {

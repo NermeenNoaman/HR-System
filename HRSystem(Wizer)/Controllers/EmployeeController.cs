@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 
 [Route("api/[controller]")]
 [ApiController]
+[Authorize]
 
 public class EmployeeController : ControllerBase
 {
@@ -27,6 +28,7 @@ public class EmployeeController : ControllerBase
     // 1. POST: Create New Employee (HR Action)
     // ----------------------------------------------------------------------
     [HttpPost]
+    [Authorize (Roles = "admin,HR")]
     [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(EmployeeReadDto))]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> CreateEmployee([FromBody] EmployeeCreateDto dto)
@@ -49,6 +51,7 @@ public class EmployeeController : ControllerBase
     // 2. GET: Get Employee by ID
     // ----------------------------------------------------------------------
     [HttpGet("{id}")]
+    [Authorize]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(EmployeeReadDto))]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetEmployee(int id)
@@ -68,6 +71,7 @@ public class EmployeeController : ControllerBase
     // 3. PUT: Update Existing Employee Details
     // ----------------------------------------------------------------------
     [HttpPut("{id}")]
+    [Authorize (Roles = "admin,HR")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> UpdateEmployee(int id, [FromBody] EmployeeUpdateDto dto)
@@ -98,6 +102,7 @@ public class EmployeeController : ControllerBase
     // 4. DELETE: Remove Employee (HR Action)
     // ----------------------------------------------------------------------
     [HttpDelete("{id}")]
+    [Authorize (Roles = "admin")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> DeleteEmployee(int id)
