@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 [Route("api/[controller]")]
 [ApiController]
-[Authorize(Roles = "HR,admin")]
+
 public class ProjectAssignmentController : ControllerBase
 {
     private readonly ITPLProjectAssignmentRepository _assignRepo;
@@ -21,11 +21,25 @@ public class ProjectAssignmentController : ControllerBase
         _assignRepo = assignRepo;
         _mapper = mapper;
     }
+    // Helper to get the current Employee ID from the JWT Token (Assumes EmployeeID Claim exists)
+    private int GetCurrentUserId()
+    {
+        var employeeIdClaim = User.FindFirst("EmployeeID")?.Value;
+
+        if (int.TryParse(employeeIdClaim, out int employeeId))
+        {
+            return employeeId;
+        }
+
+        // If the token is valid but the EmployeeID claim is missing/invalid
+        throw new UnauthorizedAccessException("Employee ID claim is missing or invalid in the token.");
+    }
 
     // =========================================================================
     // POST: Assign Employee to Project (Create)
     // =========================================================================
     [HttpPost]
+    [Authorize(Roles = "HR,admin")]
     [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(TPLProjectAssignmentReadDTO))]
     [ProducesResponseType(StatusCodes.Status409Conflict)]
     public async Task<IActionResult> AssignEmployee([FromBody] TPLProjectAssignmentCreateDTO dto)
@@ -37,7 +51,7 @@ public class ProjectAssignmentController : ControllerBase
             return Conflict(new { Message = $"Employee {dto.EmployeeID} is already assigned to Project {dto.ProjectID}." });
         }
 
-        var entity = _mapper.Map<TPLProject_Assignment>(dto);
+        var entity = _mapper.Map<TPLProjectAssignment>(dto);
         var createdEntity = await _assignRepo.AddAsync(entity);
         await _assignRepo.SaveChangesAsync();
 
@@ -50,6 +64,7 @@ public class ProjectAssignmentController : ControllerBase
     // GET: Get All Assignments (Admin/HR View)
     // =========================================================================
     [HttpGet]
+    [Authorize(Roles = "HR,admin")]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<TPLProjectAssignmentReadDTO>))]
     public async Task<IActionResult> GetAllAssignments()
     {
@@ -62,6 +77,7 @@ public class ProjectAssignmentController : ControllerBase
     // GET: Get Assignment by PK (assignment_id)
     // =========================================================================
     [HttpGet("{id}")]
+    [Authorize(Roles = "HR,admin")]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(TPLProjectAssignmentReadDTO))]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetAssignmentById(int id)
@@ -79,35 +95,28 @@ public class ProjectAssignmentController : ControllerBase
     }
 
     // =========================================================================
-    // PUT: Update Assignment Details (Role/Hours)
+    // 4. GET: Get Assignments for the CURRENT Employee (SELF-SERVICE) (ADDED)
     // =========================================================================
-    // We use the unique assignment_id in the URL
-    [HttpPut("{id}")]
-    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(TPLProjectAssignmentReadDTO))]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> UpdateAssignment(int id, [FromBody] TPLProjectAssignmentUpdateDTO dto)
+    [HttpGet("my-assignments")]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<TPLProjectAssignmentReadDTO>))]
+    [Authorize(Roles = "Employee")]
+    public async Task<IActionResult> GetMyAssignments()
     {
-        var existingEntity = await _assignRepo.GetByIdAsync(id);
+        int employeeId = GetCurrentUserId();
 
-        if (existingEntity == null)
-        {
-            return NotFound(new { Message = $"Assignment record with ID {id} not found for update." });
-        }
+        var entities = await _assignRepo.GetAssignmentsByEmployeeIdAsync(employeeId);
 
-        // Apply updates (RoleInProject, HoursWorked, status)
-        _mapper.Map(dto, existingEntity);
-
-        await _assignRepo.UpdateAsync(existingEntity);
-        await _assignRepo.SaveChangesAsync();
-
-        var updatedDto = _mapper.Map<TPLProjectAssignmentReadDTO>(existingEntity);
-        return Ok(updatedDto);
+        var dtos = _mapper.Map<IEnumerable<TPLProjectAssignmentReadDTO>>(entities);
+        return Ok(dtos);
     }
+
+
 
     // =========================================================================
     // DELETE: Remove Employee Assignment
     // =========================================================================
     [HttpDelete("{id}")]
+    [Authorize(Roles = "HR,admin")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> DeleteAssignment(int id)

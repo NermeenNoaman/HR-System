@@ -7,18 +7,22 @@ using System.Threading.Tasks;
 
 namespace HRSystem.BaseLibrary.DTOs
 {
+    // =========================================================================
+    // READ DTO (OUTPUT)
+    // =========================================================================
     public class TPLProjectAssignmentReadDTO
     {
-        public int assignment_id { get; set; }
+        public int assignment_id { get; set; } // PK for reading
         public int EmployeeID { get; set; }
         public int ProjectID { get; set; }
         public string RoleInProject { get; set; }
         public int HoursWorked { get; set; }
         public string status { get; set; }
-
-        
     }
 
+    // =========================================================================
+    // CREATE DTO (INPUT)
+    // =========================================================================
     public class TPLProjectAssignmentCreateDTO
     {
         [Required]
@@ -37,11 +41,17 @@ namespace HRSystem.BaseLibrary.DTOs
 
         [Required]
         [StringLength(10)]
-        public string status { get; set; } 
+        public string status { get; set; }
     }
 
+    // =========================================================================
+    // UPDATE DTO (INPUT)
+    // =========================================================================
     public class TPLProjectAssignmentUpdateDTO
     {
+        [Required(ErrorMessage = "Assignment ID is required for update.")]
+        public int AssignmentID { get; set; }
+
         public int? EmployeeID { get; set; }
         public int? ProjectID { get; set; }
 
@@ -52,6 +62,6 @@ namespace HRSystem.BaseLibrary.DTOs
         public int? HoursWorked { get; set; }
 
         [StringLength(10)]
-        public string status { get; set; } 
+        public string status { get; set; }
     }
 }

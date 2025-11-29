@@ -10,7 +10,7 @@ namespace HRSystem.Infrastructure.Contracts
         // Logic for retrieving contact details required for notifications/emails
         Task<TPLEmployee> GetEmployeeContactInfoAsync(int employeeId);
 
-        // You may need a function to get the Manager's email based on the Employee (Requires ManagerID column/relationship in TPLEmployee)
-        // Example: Task<string> GetManagerEmailByEmployeeIdAsync(int employeeId);
+        // ADD: Logic to check existence without tracking
+        Task<TPLEmployee?> GetEmployeeExistenceByIdAsync(int employeeId);
     }
 }

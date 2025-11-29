@@ -21,4 +21,18 @@ public class TPLTrainingRepository : GenericRepository<TPLTraining>, ITPLTrainin
         return await _context.Set<TPLTraining>()
             .FirstOrDefaultAsync(t => t.Title == title);
     }
+
+    public async Task<TPLTraining?> IsEmployeeAssignedToTitleAsync(int employeeId, string title)
+    {
+        // Logic: Find any record where the EmployeeID matches AND the Title matches.
+        return await _context.Set<TPLTraining>()
+            .FirstOrDefaultAsync(t => t.EmployeeID == employeeId && t.Title == title);
+    }
+
+    public async Task<IEnumerable<TPLTraining>> GetTrainingsByEmployeeIdAsync(int employeeId)
+    {
+        return await _context.Set<TPLTraining>()
+            .Where(t => t.EmployeeID == employeeId)
+            .ToListAsync();
+    }
 }

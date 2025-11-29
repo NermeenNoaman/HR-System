@@ -44,13 +44,10 @@ public partial class HRSystemContext : DbContext
 
     public virtual DbSet<TPLCandidate> TPLCandidates { get; set; }
 
-    public virtual DbSet<TPLDisciplinaryAction> TPLDisciplinaryActions { get; set; }
 
     public virtual DbSet<TPLDocumentManagement> TPLDocumentManagements { get; set; }
 
     public virtual DbSet<TPLEmployee> TPLEmployees { get; set; }
-
-    public virtual DbSet<TPLEmployee_Training> TPLEmployee_Trainings { get; set; }
 
     public virtual DbSet<TPLEvaluationCriterion> TPLEvaluationCriteria { get; set; }
 
@@ -74,7 +71,7 @@ public partial class HRSystemContext : DbContext
 
     public virtual DbSet<TPLProject> TPLProjects { get; set; }
 
-    public virtual DbSet<TPLProject_Assignment> TPLProject_Assignments { get; set; }
+    public virtual DbSet<TPLProjectAssignment> TPLProject_Assignments { get; set; }
 
     public virtual DbSet<TPLRecruitmentPortal> TPLRecruitmentPortals { get; set; }
 
@@ -212,20 +209,7 @@ public partial class HRSystemContext : DbContext
                 .HasConstraintName("FK_TPLCandidate_LkpJobApplication");
         });
 
-        modelBuilder.Entity<TPLDisciplinaryAction>(entity =>
-        {
-            entity.HasKey(e => e.ActionID).HasName("PK__TPLDisci__FFE3F4B90953BFED");
-
-            entity.Property(e => e.ActionID).ValueGeneratedOnAdd();
-
-            entity.HasOne(d => d.Employee).WithMany(p => p.TPLDisciplinaryActionEmployees)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_TPLDisciplinaryActions_Employee1");
-
-            entity.HasOne(d => d.TakenByNavigation).WithMany(p => p.TPLDisciplinaryActionTakenByNavigations)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_TPLDisciplinaryActions_Employee");
-        });
+       
 
         modelBuilder.Entity<TPLDocumentManagement>(entity =>
         {
@@ -251,19 +235,6 @@ public partial class HRSystemContext : DbContext
             entity.HasOne(d => d.Job).WithMany(p => p.TPLEmployees)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_TPLEmployee_Job");
-        });
-
-        modelBuilder.Entity<TPLEmployee_Training>(entity =>
-        {
-            entity.HasKey(e => new { e.EmployeeID, e.TrainingID }).HasName("PK__TPLEmplo__445D3E2F19C3B2EB");
-
-            entity.HasOne(d => d.Employee).WithMany(p => p.TPLEmployee_Trainings)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_TPLEmployee_Training_TPLEmployee");
-
-            entity.HasOne(d => d.Training).WithMany(p => p.TPLEmployee_Trainings)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK__TPLEmploy__Train__2180FB33");
         });
 
         modelBuilder.Entity<TPLEvaluationCriterion>(entity =>
@@ -381,18 +352,6 @@ public partial class HRSystemContext : DbContext
             entity.HasOne(d => d.Manager).WithMany(p => p.TPLProjects).HasConstraintName("FK_TPLProject_Manager");
         });
 
-        modelBuilder.Entity<TPLProject_Assignment>(entity =>
-        {
-            entity.Property(e => e.assignment_id).ValueGeneratedOnAdd();
-
-            entity.HasOne(d => d.Employee).WithMany(p => p.TPLProject_Assignments)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_TPLProject_Assignment_TPLEmployee");
-
-            entity.HasOne(d => d.Project).WithMany(p => p.TPLProject_Assignments)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_TPLProject_Assignment_TPLProject");
-        });
 
         modelBuilder.Entity<TPLRecruitmentPortal>(entity =>
         {
