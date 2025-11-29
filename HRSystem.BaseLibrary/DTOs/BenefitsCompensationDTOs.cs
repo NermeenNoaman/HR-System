@@ -1,19 +1,22 @@
+// DTOs for TPLBenefitsCompensation Entity
+
 using System;
 using System.ComponentModel.DataAnnotations;
 
 namespace HRSystem.BaseLibrary.DTOs
 {
+    // Read DTO (OUTPUT)
     public class BenefitsCompensationReadDto
     {
         public int BenefitID { get; set; }
         public int EmployeeID { get; set; }
         public int BenefitTypeID { get; set; }
-        public DateOnly StartDate { get; set; }
-        public DateOnly? EndDate { get; set; }
+        public DateTime StartDate { get; set; }
+        public DateTime? EndDate { get; set; }
         public decimal? Value { get; set; }
-        public string BenefitTypeName { get; set; }
     }
 
+    // Create DTO (INPUT)
     public class BenefitsCompensationCreateDto
     {
         [Required(ErrorMessage = "Employee ID is required.")]
@@ -23,16 +26,17 @@ namespace HRSystem.BaseLibrary.DTOs
         public int BenefitTypeID { get; set; }
 
         [Required(ErrorMessage = "Start Date is required.")]
-        public DateOnly StartDate { get; set; }
+        public DateTime StartDate { get; set; }
 
-        public DateOnly? EndDate { get; set; }
+        public DateTime? EndDate { get; set; }
 
         public decimal? Value { get; set; }
     }
 
+    // Update DTO (INPUT)
     public class BenefitsCompensationUpdateDto
     {
-        [Required(ErrorMessage = "Benefit ID is required.")]
+        [Required(ErrorMessage = "Benefit ID is required for update.")]
         public int BenefitID { get; set; }
 
         [Required(ErrorMessage = "Employee ID is required.")]
@@ -42,13 +46,14 @@ namespace HRSystem.BaseLibrary.DTOs
         public int BenefitTypeID { get; set; }
 
         [Required(ErrorMessage = "Start Date is required.")]
-        public DateOnly StartDate { get; set; }
+        public DateTime StartDate { get; set; }
 
-        public DateOnly? EndDate { get; set; }
+        public DateTime? EndDate { get; set; }
 
         public decimal? Value { get; set; }
     }
 }
+
 
 
 

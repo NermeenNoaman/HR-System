@@ -1,7 +1,10 @@
+// DTOs for TPLCandidate Entity
+
 using System.ComponentModel.DataAnnotations;
 
 namespace HRSystem.BaseLibrary.DTOs
 {
+    // Read DTO (OUTPUT)
     public class CandidateReadDto
     {
         public int CandidateID { get; set; }
@@ -9,6 +12,7 @@ namespace HRSystem.BaseLibrary.DTOs
         public int JobApplicationId { get; set; }
     }
 
+    // Create DTO (INPUT)
     public class CandidateCreateDto
     {
         [Required(ErrorMessage = "Status is required.")]
@@ -19,9 +23,10 @@ namespace HRSystem.BaseLibrary.DTOs
         public int JobApplicationId { get; set; }
     }
 
+    // Update DTO (INPUT)
     public class CandidateUpdateDto
     {
-        [Required(ErrorMessage = "Candidate ID is required.")]
+        [Required(ErrorMessage = "Candidate ID is required for update.")]
         public int CandidateID { get; set; }
 
         [Required(ErrorMessage = "Status is required.")]
@@ -32,6 +37,7 @@ namespace HRSystem.BaseLibrary.DTOs
         public int JobApplicationId { get; set; }
     }
 }
+
 
 
 

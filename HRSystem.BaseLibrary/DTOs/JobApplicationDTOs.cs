@@ -1,8 +1,11 @@
+// DTOs for LkpJobApplication Entity
+
 using System;
 using System.ComponentModel.DataAnnotations;
 
 namespace HRSystem.BaseLibrary.DTOs
 {
+    // Read DTO (OUTPUT)
     public class JobApplicationReadDto
     {
         public int JobApplicationId { get; set; }
@@ -16,6 +19,7 @@ namespace HRSystem.BaseLibrary.DTOs
         public int? CV_ID { get; set; }
     }
 
+    // Create DTO (INPUT)
     public class JobApplicationCreateDto
     {
         [Required(ErrorMessage = "Job ID is required.")]
@@ -26,8 +30,8 @@ namespace HRSystem.BaseLibrary.DTOs
         public string Name { get; set; }
 
         [Required(ErrorMessage = "Email is required.")]
-        [EmailAddress(ErrorMessage = "Invalid email format.")]
         [StringLength(50)]
+        [EmailAddress(ErrorMessage = "Invalid email format.")]
         public string Email { get; set; }
 
         [Required(ErrorMessage = "Phone is required.")]
@@ -41,12 +45,16 @@ namespace HRSystem.BaseLibrary.DTOs
         [StringLength(10)]
         public string Status { get; set; }
 
+        [Required(ErrorMessage = "Apply Date is required.")]
+        public DateTime ApplyDate { get; set; }
+
         public int? CV_ID { get; set; }
     }
 
+    // Update DTO (INPUT)
     public class JobApplicationUpdateDto
     {
-        [Required(ErrorMessage = "Job Application ID is required.")]
+        [Required(ErrorMessage = "Job Application ID is required for update.")]
         public int JobApplicationId { get; set; }
 
         [Required(ErrorMessage = "Job ID is required.")]
@@ -57,8 +65,8 @@ namespace HRSystem.BaseLibrary.DTOs
         public string Name { get; set; }
 
         [Required(ErrorMessage = "Email is required.")]
-        [EmailAddress(ErrorMessage = "Invalid email format.")]
         [StringLength(50)]
+        [EmailAddress(ErrorMessage = "Invalid email format.")]
         public string Email { get; set; }
 
         [Required(ErrorMessage = "Phone is required.")]
@@ -72,9 +80,13 @@ namespace HRSystem.BaseLibrary.DTOs
         [StringLength(10)]
         public string Status { get; set; }
 
+        [Required(ErrorMessage = "Apply Date is required.")]
+        public DateTime ApplyDate { get; set; }
+
         public int? CV_ID { get; set; }
     }
 }
+
 
 
 

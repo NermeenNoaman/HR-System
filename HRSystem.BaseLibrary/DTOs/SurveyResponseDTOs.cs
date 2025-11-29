@@ -1,7 +1,10 @@
+// DTOs for TPLSurvey_Response Entity
+
 using System.ComponentModel.DataAnnotations;
 
 namespace HRSystem.BaseLibrary.DTOs
 {
+    // Read DTO (OUTPUT)
     public class SurveyResponseReadDto
     {
         public int ResponseID { get; set; }
@@ -9,9 +12,9 @@ namespace HRSystem.BaseLibrary.DTOs
         public int EmployeeID { get; set; }
         public string ResponseText { get; set; }
         public int Rating { get; set; }
-        public string SurveyTitle { get; set; }
     }
 
+    // Create DTO (INPUT)
     public class SurveyResponseCreateDto
     {
         [Required(ErrorMessage = "Survey ID is required.")]
@@ -23,13 +26,13 @@ namespace HRSystem.BaseLibrary.DTOs
         public string ResponseText { get; set; }
 
         [Required(ErrorMessage = "Rating is required.")]
-        [Range(1, 5, ErrorMessage = "Rating must be between 1 and 5.")]
         public int Rating { get; set; }
     }
 
+    // Update DTO (INPUT)
     public class SurveyResponseUpdateDto
     {
-        [Required(ErrorMessage = "Response ID is required.")]
+        [Required(ErrorMessage = "Response ID is required for update.")]
         public int ResponseID { get; set; }
 
         [Required(ErrorMessage = "Survey ID is required.")]
@@ -41,10 +44,10 @@ namespace HRSystem.BaseLibrary.DTOs
         public string ResponseText { get; set; }
 
         [Required(ErrorMessage = "Rating is required.")]
-        [Range(1, 5, ErrorMessage = "Rating must be between 1 and 5.")]
         public int Rating { get; set; }
     }
 }
+
 
 
 

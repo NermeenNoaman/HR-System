@@ -1,8 +1,11 @@
+// DTOs for TPLCVBank Entity
+
 using System;
 using System.ComponentModel.DataAnnotations;
 
 namespace HRSystem.BaseLibrary.DTOs
 {
+    // Read DTO (OUTPUT)
     public class CVBankReadDto
     {
         public int CV_ID { get; set; }
@@ -14,6 +17,7 @@ namespace HRSystem.BaseLibrary.DTOs
         public string Notes { get; set; }
     }
 
+    // Create DTO (INPUT)
     public class CVBankCreateDto
     {
         [Required(ErrorMessage = "Full Name is required.")]
@@ -21,8 +25,8 @@ namespace HRSystem.BaseLibrary.DTOs
         public string FullName { get; set; }
 
         [Required(ErrorMessage = "Email is required.")]
-        [EmailAddress(ErrorMessage = "Invalid email format.")]
         [StringLength(100)]
+        [EmailAddress(ErrorMessage = "Invalid email format.")]
         public string Email { get; set; }
 
         [Required(ErrorMessage = "Phone Number is required.")]
@@ -33,14 +37,18 @@ namespace HRSystem.BaseLibrary.DTOs
         [StringLength(255)]
         public string CV_File { get; set; }
 
+        [Required(ErrorMessage = "Added Date is required.")]
+        public DateTime AddedDate { get; set; }
+
         [Required(ErrorMessage = "Notes is required.")]
         [StringLength(200)]
         public string Notes { get; set; }
     }
 
+    // Update DTO (INPUT)
     public class CVBankUpdateDto
     {
-        [Required(ErrorMessage = "CV ID is required.")]
+        [Required(ErrorMessage = "CV ID is required for update.")]
         public int CV_ID { get; set; }
 
         [Required(ErrorMessage = "Full Name is required.")]
@@ -48,8 +56,8 @@ namespace HRSystem.BaseLibrary.DTOs
         public string FullName { get; set; }
 
         [Required(ErrorMessage = "Email is required.")]
-        [EmailAddress(ErrorMessage = "Invalid email format.")]
         [StringLength(100)]
+        [EmailAddress(ErrorMessage = "Invalid email format.")]
         public string Email { get; set; }
 
         [Required(ErrorMessage = "Phone Number is required.")]
@@ -60,11 +68,15 @@ namespace HRSystem.BaseLibrary.DTOs
         [StringLength(255)]
         public string CV_File { get; set; }
 
+        [Required(ErrorMessage = "Added Date is required.")]
+        public DateTime AddedDate { get; set; }
+
         [Required(ErrorMessage = "Notes is required.")]
         [StringLength(200)]
         public string Notes { get; set; }
     }
 }
+
 
 
 

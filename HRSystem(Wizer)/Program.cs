@@ -5,6 +5,7 @@ using HRSystem.Core.Services;
 using HRSystem.Infrastructure.Contracts;
 using HRSystem.Infrastructure.Data;
 using HRSystem.Infrastructure.Implementations;
+using HRSystem.Infrastructure.Implementations.Repositories;
 using HRSystem.Infrastructure.Implementations.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
@@ -44,15 +45,34 @@ namespace HRSystem_Wizer_
             builder.Services.AddScoped<ILKPLeaveTypeRepository, LKPLeaveTypeRepository>();
             builder.Services.AddScoped<ITPLEmployeeRepository, TPLEmployeeRepository>();
             builder.Services.AddScoped<ILeaveManagementService, LeaveManagementService>();
+           
+           // Register 16 entities' repositories for DI (already present or to be plugged in)
+            builder.Services.AddScoped<ISelfServiceRequestRepository, SelfServiceRequestRepository>();
+            builder.Services.AddScoped<IDocumentManagementRepository, DocumentManagementRepository>();
+            builder.Services.AddScoped<IBenefitsCompensationRepository, BenefitsCompensationRepository>();
+            builder.Services.AddScoped<IBenefitTypesRepository, BenefitTypesRepository>();
+            builder.Services.AddScoped<ISalaryRepository, SalaryRepository>();
+            builder.Services.AddScoped<IPerformanceEvaluationRepository, PerformanceEvaluationRepository>();
+            builder.Services.AddScoped<IEvaluationCriteriaRepository, EvaluationCriteriaRepository>();
+            builder.Services.AddScoped<ISurveyRepository, SurveyRepository>();
+            builder.Services.AddScoped<ISurveyResponseRepository, SurveyResponseRepository>();
+            builder.Services.AddScoped<IJobRepository, JobRepository>();
+            builder.Services.AddScoped<IHRNeedRequestRepository, HRNeedRequestRepository>();
+            builder.Services.AddScoped<IRecruitmentPortalRepository, RecruitmentPortalRepository>();
+            builder.Services.AddScoped<ICVBankRepository, CVBankRepository>();
+            builder.Services.AddScoped<IJobApplicationRepository, JobApplicationRepository>();
+            builder.Services.AddScoped<ICandidateRepository, CandidateRepository>();
+            builder.Services.AddScoped<IInterviewRepository, InterviewRepository>();
+            
             // Add services to the container.
             builder.Services.AddControllers();
 
             builder.Services.AddScoped<IAuthService, AuthService>();
             builder.Services.AddScoped<ITokenService, TokenService>();
-
+            
             // Register Generic Repository (works for all entity types)
             builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
-
+            
             // ---------------- JWT CONFIGURATION ----------------
 
 
@@ -114,7 +134,6 @@ namespace HRSystem_Wizer_
 
 
                 var app = builder.Build();
-
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
             {

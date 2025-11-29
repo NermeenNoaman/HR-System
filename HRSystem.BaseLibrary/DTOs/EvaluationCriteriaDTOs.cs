@@ -1,7 +1,10 @@
+// DTOs for TPLEvaluationCriterion Entity
+
 using System.ComponentModel.DataAnnotations;
 
 namespace HRSystem.BaseLibrary.DTOs
 {
+    // Read DTO (OUTPUT)
     public class EvaluationCriteriaReadDto
     {
         public int CriteriaID { get; set; }
@@ -10,6 +13,7 @@ namespace HRSystem.BaseLibrary.DTOs
         public decimal Weight { get; set; }
     }
 
+    // Create DTO (INPUT)
     public class EvaluationCriteriaCreateDto
     {
         [Required(ErrorMessage = "Criteria Name is required.")]
@@ -20,13 +24,13 @@ namespace HRSystem.BaseLibrary.DTOs
         public string Description { get; set; }
 
         [Required(ErrorMessage = "Weight is required.")]
-        [Range(0, 100, ErrorMessage = "Weight must be between 0 and 100.")]
         public decimal Weight { get; set; }
     }
 
+    // Update DTO (INPUT)
     public class EvaluationCriteriaUpdateDto
     {
-        [Required(ErrorMessage = "Criteria ID is required.")]
+        [Required(ErrorMessage = "Criteria ID is required for update.")]
         public int CriteriaID { get; set; }
 
         [Required(ErrorMessage = "Criteria Name is required.")]
@@ -37,10 +41,10 @@ namespace HRSystem.BaseLibrary.DTOs
         public string Description { get; set; }
 
         [Required(ErrorMessage = "Weight is required.")]
-        [Range(0, 100, ErrorMessage = "Weight must be between 0 and 100.")]
         public decimal Weight { get; set; }
     }
 }
+
 
 
 

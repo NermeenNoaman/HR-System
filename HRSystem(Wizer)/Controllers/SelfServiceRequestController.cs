@@ -1,91 +1,154 @@
+using AutoMapper;
 using HRSystem.BaseLibrary.DTOs;
+using HRSystem.BaseLibrary.Models;
 using HRSystem.Infrastructure.Contracts;
 using Microsoft.AspNetCore.Mvc;
 
-[Route("api/[controller]")]
-[ApiController]
-public class SelfServiceRequestController : ControllerBase
+namespace HRSystem_Wizer_.Controllers
+{
+    [Route("api/[controller]")]
+    [ApiController]
+    public class SelfServiceRequestController : ControllerBase
     {
-        private readonly ISelfServiceRequestService _service;
+        private readonly IGenericRepository<TPLSelfServiceRequest> _repository;
+        private readonly IMapper _mapper;
 
-        public SelfServiceRequestController(ISelfServiceRequestService service)
+        public SelfServiceRequestController(IGenericRepository<TPLSelfServiceRequest> repository, IMapper mapper)
         {
-            _service = service;
+            _repository = repository;
+            _mapper = mapper;
         }
 
+        // GET: api/SelfServiceRequest
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<SelfServiceRequestReadDto>))]
         public async Task<IActionResult> GetAll()
         {
-            var dtos = await _service.GetAllAsync();
-            return Ok(dtos);
+            try
+            {
+                var entities = await _repository.GetAllAsync();
+                var dtos = _mapper.Map<IEnumerable<SelfServiceRequestReadDto>>(entities);
+                return Ok(dtos);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"An error occurred: {ex.Message}");
+            }
         }
 
+        // GET: api/SelfServiceRequest/5
         [HttpGet("{id}")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(SelfServiceRequestReadDto))]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> GetById(int id)
         {
-            var dto = await _service.GetByIdAsync(id);
-            if (dto == null)
+            try
             {
-                return NotFound(new { Message = $"Self Service Request with ID {id} not found." });
+                var entity = await _repository.GetByIdAsync(id);
+                if (entity == null)
+                {
+                    return NotFound(new { Message = $"Self Service Request with ID {id} not found." });
+                }
+
+                var dto = _mapper.Map<SelfServiceRequestReadDto>(entity);
+                return Ok(dto);
             }
-            return Ok(dto);
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"An error occurred: {ex.Message}");
+            }
         }
 
+        // POST: api/SelfServiceRequest
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(SelfServiceRequestReadDto))]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> Create([FromBody] SelfServiceRequestCreateDto dto)
         {
-            if (!ModelState.IsValid)
+            try
             {
-                return BadRequest(ModelState);
-            }
+                if (!ModelState.IsValid)
+                {
+                    return BadRequest(ModelState);
+                }
 
-            var createdDto = await _service.CreateAsync(dto);
-            return CreatedAtAction(nameof(GetById), new { id = createdDto.RequestID }, createdDto);
+                var entity = _mapper.Map<TPLSelfServiceRequest>(dto);
+                var createdEntity = await _repository.AddAsync(entity);
+                await _repository.SaveChangesAsync();
+
+                var createdDto = _mapper.Map<SelfServiceRequestReadDto>(createdEntity);
+                return CreatedAtAction(nameof(GetById), new { id = createdDto.RequestID }, createdDto);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"An error occurred: {ex.Message}");
+            }
         }
 
+        // PUT: api/SelfServiceRequest/5
         [HttpPut("{id}")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> Update(int id, [FromBody] SelfServiceRequestUpdateDto dto)
         {
-            if (id != dto.RequestID)
+            try
             {
-                return BadRequest(new { Message = "ID mismatch between route and body." });
-            }
+                if (id != dto.RequestID)
+                {
+                    return BadRequest(new { Message = "ID mismatch between route and body." });
+                }
 
-            if (!ModelState.IsValid)
+                if (!ModelState.IsValid)
+                {
+                    return BadRequest(ModelState);
+                }
+
+                var existingEntity = await _repository.GetByIdAsync(id);
+                if (existingEntity == null)
+                {
+                    return NotFound(new { Message = $"Self Service Request with ID {id} not found." });
+                }
+
+                _mapper.Map(dto, existingEntity);
+                await _repository.UpdateAsync(existingEntity);
+                await _repository.SaveChangesAsync();
+
+                return NoContent();
+            }
+            catch (Exception ex)
             {
-                return BadRequest(ModelState);
+                return StatusCode(500, $"An error occurred: {ex.Message}");
             }
-
-            var result = await _service.UpdateAsync(id, dto);
-            if (!result)
-            {
-                return NotFound(new { Message = $"Self Service Request with ID {id} not found for update." });
-            }
-
-            return Ok(new { Message = "Self Service Request updated successfully." });
         }
 
+        // DELETE: api/SelfServiceRequest/5
         [HttpDelete("{id}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> Delete(int id)
         {
-            var result = await _service.DeleteAsync(id);
-            if (!result)
+            try
             {
-                return NotFound(new { Message = $"Self Service Request with ID {id} not found." });
-            }
+                var entity = await _repository.GetByIdAsync(id);
+                if (entity == null)
+                {
+                    return NotFound(new { Message = $"Self Service Request with ID {id} not found." });
+                }
 
-            return NoContent();
+                await _repository.DeleteAsync(entity);
+                await _repository.SaveChangesAsync();
+
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"An error occurred: {ex.Message}");
+            }
         }
+    }
 }
+
+
 
 
