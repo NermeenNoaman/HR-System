@@ -38,7 +38,6 @@ namespace HRSystem.Infrastructure.Implementations
                     throw new Exception("Username already exists");
 
                 if (_context.TPLEmployees.FirstOrDefault(
-                user => user.EmployeeID == request.EmployeeId) == null|| _context.TPLEmployee_Trainings.FirstOrDefault(
                 user => user.EmployeeID == request.EmployeeId) == null)
                 {
                     throw new Exception("Employee not found. Provide a valid EmployeeId.");

@@ -99,7 +99,7 @@ public class ProjectAssignmentController : ControllerBase
     // =========================================================================
     [HttpGet("my-assignments")]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<TPLProjectAssignmentReadDTO>))]
-    [Authorize(Roles = "Employee")]
+    [Authorize]
     public async Task<IActionResult> GetMyAssignments()
     {
         int employeeId = GetCurrentUserId();
@@ -116,7 +116,7 @@ public class ProjectAssignmentController : ControllerBase
     // DELETE: Remove Employee Assignment
     // =========================================================================
     [HttpDelete("{id}")]
-    [Authorize(Roles = "HR,admin")]
+    [Authorize(Roles = "admin")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> DeleteAssignment(int id)

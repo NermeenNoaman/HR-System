@@ -28,7 +28,7 @@ public class AssetManagementController : ControllerBase
     [HttpPost]
     [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(TPLAssetManagementReadDTO))]
     [ProducesResponseType(StatusCodes.Status409Conflict)]
-    [Authorize(Roles = "HR,admin")]
+    [Authorize(Roles = "admin")]
     public async Task<IActionResult> CreateAssetAssignment([FromBody] TPLAssetManagementCreateDTO dto)
     {
         // Validation: Check for unique Serial Number
@@ -65,7 +65,7 @@ public class AssetManagementController : ControllerBase
     // GET: Get All Assets Assigned to an Employee (READ FILTERED)
     // =========================================================================
     [HttpGet("employee/{employeeId}")]
-    [Authorize(Roles = "HR,admin,Employee")]
+    [Authorize(Roles = "HR,admin")]
     public async Task<IActionResult> GetEmployeeAssets(int employeeId)
     {
         // 1. Extracting the current user's identity (from the token)
@@ -101,7 +101,7 @@ public class AssetManagementController : ControllerBase
     // =========================================================================
     // GET: Get Assets for the CURRENT Employee (SELF-SERVICE)
     // =========================================================================
-    [Authorize]
+    
     // Helper to get the current Employee ID from the JWT Token
     private int GetCurrentUserId()
     {
@@ -137,7 +137,7 @@ public class AssetManagementController : ControllerBase
     // PUT: Update Asset Status/Return Date (UPDATE)
     // =========================================================================
     [HttpPut("{id}")]
-    [Authorize(Roles = "HR,admin")]
+    [Authorize(Roles = "admin")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> UpdateAsset(int id, [FromBody] TPLAssetManagementUpdateDTO dto)
@@ -158,7 +158,7 @@ public class AssetManagementController : ControllerBase
     // DELETE: Delete Asset (Hard Delete - Use with caution)
     // =========================================================================
     [HttpDelete("{id}")]
-    [Authorize(Roles = "HR,admin")]
+    [Authorize(Roles = "admin")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> DeleteAsset(int id)
