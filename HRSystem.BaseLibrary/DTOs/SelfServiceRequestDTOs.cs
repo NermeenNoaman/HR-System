@@ -1,18 +1,22 @@
+// DTOs for TPLSelfServiceRequest Entity
+
 using System;
 using System.ComponentModel.DataAnnotations;
 
 namespace HRSystem.BaseLibrary.DTOs
 {
+    // Read DTO (OUTPUT)
     public class SelfServiceRequestReadDto
     {
         public int RequestID { get; set; }
         public int EmployeeID { get; set; }
         public string RequestType { get; set; }
-        public DateOnly RequestDate { get; set; }
+        public DateTime RequestDate { get; set; }
         public string Status { get; set; }
         public int? ApprovedBy { get; set; }
     }
 
+    // Create DTO (INPUT)
     public class SelfServiceRequestCreateDto
     {
         [Required(ErrorMessage = "Employee ID is required.")]
@@ -23,7 +27,7 @@ namespace HRSystem.BaseLibrary.DTOs
         public string RequestType { get; set; }
 
         [Required(ErrorMessage = "Request Date is required.")]
-        public DateOnly RequestDate { get; set; }
+        public DateTime RequestDate { get; set; }
 
         [Required(ErrorMessage = "Status is required.")]
         [StringLength(50)]
@@ -32,9 +36,10 @@ namespace HRSystem.BaseLibrary.DTOs
         public int? ApprovedBy { get; set; }
     }
 
+    // Update DTO (INPUT)
     public class SelfServiceRequestUpdateDto
     {
-        [Required(ErrorMessage = "Request ID is required.")]
+        [Required(ErrorMessage = "Request ID is required for update.")]
         public int RequestID { get; set; }
 
         [Required(ErrorMessage = "Employee ID is required.")]
@@ -45,7 +50,7 @@ namespace HRSystem.BaseLibrary.DTOs
         public string RequestType { get; set; }
 
         [Required(ErrorMessage = "Request Date is required.")]
-        public DateOnly RequestDate { get; set; }
+        public DateTime RequestDate { get; set; }
 
         [Required(ErrorMessage = "Status is required.")]
         [StringLength(50)]
@@ -54,5 +59,3 @@ namespace HRSystem.BaseLibrary.DTOs
         public int? ApprovedBy { get; set; }
     }
 }
-
-

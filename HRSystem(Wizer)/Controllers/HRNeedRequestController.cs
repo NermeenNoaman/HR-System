@@ -1,11 +1,9 @@
 using HRSystem.BaseLibrary.DTOs;
 using HRSystem.Infrastructure.Contracts;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Authorization;
 
 [Route("api/[controller]")]
 [ApiController]
-[Authorize]
 public class HRNeedRequestController : ControllerBase
     {
         private readonly IHRNeedRequestService _service;
@@ -16,7 +14,6 @@ public class HRNeedRequestController : ControllerBase
         }
 
         [HttpGet]
-        [Authorize(Roles = "admin,HR")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<HRNeedRequestReadDto>))]
         public async Task<IActionResult> GetAll()
         {
@@ -25,8 +22,7 @@ public class HRNeedRequestController : ControllerBase
         }
 
         [HttpGet("{id}")]
-        [Authorize(Roles = "admin,HR")]
-    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(HRNeedRequestReadDto))]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(HRNeedRequestReadDto))]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> GetById(int id)
         {
@@ -39,7 +35,6 @@ public class HRNeedRequestController : ControllerBase
         }
 
         [HttpPost]
-        [Authorize(Roles = "admin,HR")]
         [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(HRNeedRequestReadDto))]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> Create([FromBody] HRNeedRequestCreateDto dto)
@@ -54,7 +49,6 @@ public class HRNeedRequestController : ControllerBase
         }
 
         [HttpPut("{id}")]
-        [Authorize(Roles = "admin,HR")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -80,7 +74,6 @@ public class HRNeedRequestController : ControllerBase
         }
 
         [HttpDelete("{id}")]
-        [Authorize(Roles = "admin")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> Delete(int id)
@@ -94,4 +87,5 @@ public class HRNeedRequestController : ControllerBase
             return NoContent();
         }
 }
+
 
