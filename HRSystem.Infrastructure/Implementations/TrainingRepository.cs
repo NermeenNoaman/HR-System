@@ -1,0 +1,24 @@
+﻿// In HRSystem.Infrastructure/Implementations/TPLTrainingRepository.cs
+using HRSystem.BaseLibrary.Models;
+using HRSystem.Infrastructure.Contracts;
+using HRSystem.Infrastructure.Data;
+using HRSystem.Infrastructure.Implementations;
+using Microsoft.EntityFrameworkCore;
+using System.Threading.Tasks;
+
+public class TPLTrainingRepository : GenericRepository<TPLTraining>, ITPLTrainingRepository
+{
+    private readonly HRSystemContext _context;
+
+    public TPLTrainingRepository(HRSystemContext context) : base(context)
+    {
+        _context = context;
+    }
+
+    // Implementation of the specific method to check for duplicate training title
+    public async Task<TPLTraining?> GetByTitleAsync(string title)
+    {
+        return await _context.Set<TPLTraining>()
+            .FirstOrDefaultAsync(t => t.Title == title);
+    }
+}

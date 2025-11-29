@@ -23,11 +23,17 @@ namespace HRSystem.BaseLibrary.DTOs
         public int EmployeeID { get; set; }
 
         [Required]
-        public DateOnly Date { get; set; }
+        public DateTime Date { get; set; }
 
         // Note: CheckIn and CheckOut are often handled by a system clock, but included for manual entry
         public DateTime? CheckIn { get; set; }
         public DateTime? CheckOut { get; set; }
+
+        [Required(ErrorMessage = "Check-In Latitude is required.")]
+        public decimal? CheckInLatitude { get; set; }
+
+        [Required(ErrorMessage = "Check-In Longitude is required.")]
+        public decimal? CheckInLongitude { get; set; }
 
         [Required, StringLength(50)]
         public string Status { get; set; }
