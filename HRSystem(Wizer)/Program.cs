@@ -49,9 +49,11 @@ namespace HRSystem_Wizer_
             builder.Services.AddScoped<IPermissionTypeRepository, LKPPermissionTypeRepository>();
             builder.Services.AddScoped<IPermissionManagementService, PermissionManagementService>();
             builder.Services.AddScoped<ITPLTrainingRepository, TPLTrainingRepository>();
-            builder.Services.AddScoped<ITPLEmployeeTrainingRepository, TPLEmployeeTrainingRepository>();
             builder.Services.AddScoped<ITPLProjectRepository, TPLProjectRepository>();
             builder.Services.AddScoped<ITPLProjectAssignmentRepository, TPLProjectAssignmentRepository>();
+            builder.Services.AddScoped<ITPLOnboardingRepository, TPLOnboardingRepository>();
+            builder.Services.AddScoped<ITPLOffboardingRepository, TPLOffboardingRepository>();
+            builder.Services.AddScoped<ITPLAssetManagementRepository, TPLAssetManagementRepository>();
 
             // Add services to the container.
             builder.Services.AddControllers();

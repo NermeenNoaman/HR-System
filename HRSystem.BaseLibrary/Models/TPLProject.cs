@@ -28,5 +28,5 @@ public partial class TPLProject
     public virtual TPLEmployee Manager { get; set; }
 
     [InverseProperty("Project")]
-    public virtual ICollection<TPLProject_Assignment> TPLProject_Assignments { get; set; } = new List<TPLProject_Assignment>();
+    public virtual ICollection<TPLProjectAssignment> TPLProject_Assignments { get; set; } = new List<TPLProjectAssignment>();
 }

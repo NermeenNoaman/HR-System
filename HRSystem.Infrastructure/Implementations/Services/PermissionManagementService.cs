@@ -10,7 +10,7 @@ public class PermissionManagementService : IPermissionManagementService
 {
     private readonly IPermissionRepository _permissionRepo;
     private readonly IPermissionTypeRepository _permissionTypeRepo;
-    private readonly ITPLEmployeeRepository _employeeRepo;
+    private readonly ITPLEmployeeRepository _employeeRepo; // Injected for FK check
 
     public PermissionManagementService(
         IPermissionRepository permissionRepo,
@@ -26,22 +26,32 @@ public class PermissionManagementService : IPermissionManagementService
     private decimal CalculateTotalHours(DateTime startTime, DateTime? endTime)
     {
         if (!endTime.HasValue) return 0;
+
+        // Use TimeSpan subtraction which is safe with DateTime
         TimeSpan duration = endTime.Value - startTime;
         return (decimal)duration.TotalHours;
     }
 
-    // Helper function to get total used hours for the current month (Implementation needed for the service)
+    // Helper function to get total used hours for the current month
     private async Task<decimal> GetEmployeeUsedHoursForMonth(int employeeId, int permissionTypeId, DateTime date)
     {
+        // This delegates to the repository to calculate the sum of approved hours this month
         return await _permissionRepo.GetEmployeeUsedHoursForMonth(employeeId, permissionTypeId, date);
     }
 
 
-    // ----------------------------------------------------------------------
+    // =========================================================================
     // 1. Process New Permission Request (Automated Check)
-    // ----------------------------------------------------------------------
+    // =========================================================================
     public async Task<PermissionReadDto> ProcessNewPermissionRequestAsync(PermissionCreateDto dto)
     {
+        // 🛑 1. FK Integrity Check: Ensure Employee ID exists before proceeding (Fixes Error 547)
+        var submittingEmployee = await _employeeRepo.GetEmployeeExistenceByIdAsync(dto.EmployeeId);
+        if (submittingEmployee == null)
+        {
+            throw new UnauthorizedAccessException($"Error: Employee ID {dto.EmployeeId} is not valid or not found in the system.");
+        }
+
         decimal requestedHours = CalculateTotalHours(dto.StartTime, dto.EndTime);
         if (requestedHours <= 0)
         {
@@ -75,6 +85,7 @@ public class PermissionManagementService : IPermissionManagementService
         }
         // --- END AUTOMATED CHECK ---
 
+        // 4. Create the TPLPermission entity in the database
         var newPermissionEntity = new TPLPermission
         {
             employee_id = dto.EmployeeId,
@@ -94,7 +105,7 @@ public class PermissionManagementService : IPermissionManagementService
             // TODO: Notify Manager
         }
 
-        // Return Read DTO (Requires AutoMapper or Manual Mapping)
+        // Return Read DTO (Manual Mapping)
         return new PermissionReadDto
         {
             PermissionId = createdEntity.permission_id,
@@ -108,7 +119,7 @@ public class PermissionManagementService : IPermissionManagementService
     }
 
     // ----------------------------------------------------------------------
-    // 4. Get Permission Request by ID (Implementation for the missing method)
+    // 4. Get Permission Request by ID (For viewing details)
     // ----------------------------------------------------------------------
     public async Task<PermissionReadDto> GetPermissionRequestByIdAsync(int permissionId)
     {
@@ -117,7 +128,6 @@ public class PermissionManagementService : IPermissionManagementService
 
         var typeRules = await _permissionTypeRepo.GetPermissionRulesByIdAsync(permission.permission_type_id);
 
-        // Manual Mapping (replace with AutoMapper if possible)
         return new PermissionReadDto
         {
             PermissionId = permission.permission_id,
@@ -141,8 +151,8 @@ public class PermissionManagementService : IPermissionManagementService
 
         try
         {
-            // Note: Deduction is handled automatically by the GetEmployeeUsedHoursForMonth query later
             await _permissionRepo.UpdatePermissionStatusAsync(permissionId, "Approved", approvedById);
+
             // TODO: Notify the employee about the approval
 
             return true;

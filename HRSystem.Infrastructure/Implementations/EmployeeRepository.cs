@@ -23,6 +23,12 @@ public class TPLEmployeeRepository : GenericRepository<TPLEmployee>, ITPLEmploye
             .AsNoTracking() // Use AsNoTracking since we are only reading data, not updating
             .FirstOrDefaultAsync(e => e.EmployeeID == employeeId);
 
-        // If the ManagerID was present, we would use Include() here to fetch the manager's data.
+    }
+
+    public async Task<TPLEmployee?> GetEmployeeExistenceByIdAsync(int employeeId)
+    {
+        return await _context.Set<TPLEmployee>()
+            .AsNoTracking() 
+            .FirstOrDefaultAsync(e => e.EmployeeID == employeeId);
     }
 }

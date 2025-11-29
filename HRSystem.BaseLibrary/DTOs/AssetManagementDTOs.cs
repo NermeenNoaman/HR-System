@@ -33,9 +33,9 @@ namespace HRSystem.BaseLibrary.DTOs
         public int AssignedTo { get; set; } 
 
         [Required]
-        public DateOnly AssignedDate { get; set; }
+        public DateTime AssignedDate { get; set; }
 
-        public DateOnly? ReturnDate { get; set; }
+        public DateTime? ReturnDate { get; set; }
 
         [Required]
         [StringLength(50)]
@@ -53,9 +53,9 @@ namespace HRSystem.BaseLibrary.DTOs
 
         public int? AssignedTo { get; set; } 
 
-        public DateOnly? AssignedDate { get; set; }
+        public DateTime? AssignedDate { get; set; }
 
-        public DateOnly? ReturnDate { get; set; }
+        public DateTime? ReturnDate { get; set; }
 
         [StringLength(50)]
         public string Status { get; set; } 

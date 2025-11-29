@@ -245,29 +245,9 @@ namespace HRSystem.BaseLibrary.Profiles // Using the specified Profiles namespac
             // 3. Update Mapping: DTO to Entity
             CreateMap<TPLTrainingUpdateDTO, TPLTraining>();
 
+           
             // =========================================================================
-            // 16. DTOs for TPLEmployee_Training (Employee Enrollment and Results)
-            // =========================================================================
-
-            // 1. Create Mapping: DTO to Entity (Enrollment)
-            CreateMap<TPLEmployeeTrainingCreateDTO, TPLEmployee_Training>()
-                // Note: The PK (EmployeeID, TrainingID) is the composite key.
-                .ForMember(dest => dest.CompletionStatus, opt => opt.MapFrom(src => src.CompletionStatus));
-            // The service layer handles existence check, but mapping is direct here.
-
-            // 2. Read Mapping: Entity to Read DTO
-            CreateMap<TPLEmployee_Training, TPLEmployeeTrainingReadDTO>();
-
-            // 3. Update Mapping: DTO to Entity (for score/status updates)
-            CreateMap<TPLEmployeeTrainingUpdateDTO, TPLEmployee_Training>()
-                // Ignore the PKs because they are used for finding the record, not updating the key itself
-                .ForMember(dest => dest.EmployeeID, opt => opt.Ignore())
-                .ForMember(dest => dest.TrainingID, opt => opt.Ignore())
-                // This mapping allows the partial update of Score and CompletionStatus
-                .ForAllMembers(opt => opt.Condition((src, dest, srcMember) => srcMember != null)); // Apply changes only if the source value is not null
-
-            // =========================================================================
-            // 17. TPLProject MAPPINGS (Master Data) 
+            // 16. TPLProject MAPPINGS (Master Data) 
             // =========================================================================
             CreateMap<TPLProjectCreateDTO, TPLProject>()
                 .ForMember(dest => dest.ProjectID, opt => opt.Ignore());
@@ -277,13 +257,58 @@ namespace HRSystem.BaseLibrary.Profiles // Using the specified Profiles namespac
             CreateMap<TPLProject, TPLProjectReadDTO>();
 
             // =========================================================================
-            // 18. TPLProjectAssignment MAPPINGS (Junction Table) 
+            // 17. TPLProjectAssignment MAPPINGS (Junction Table) 
             // =========================================================================
-            CreateMap<TPLProjectAssignmentCreateDTO, TPLProject_Assignment>()
-               .ForMember(dest => dest.assignment_id, opt => opt.Ignore())
+            CreateMap<TPLProjectAssignmentCreateDTO, TPLProjectAssignment>()
+               .ForMember(dest => dest.AssignmentID, opt => opt.Ignore())
                .ForAllMembers(opt => opt.Condition((src, dest, srcMember) => srcMember != null));
-            CreateMap<TPLProjectAssignmentUpdateDTO, TPLProject_Assignment>();
-            CreateMap<TPLProject_Assignment, TPLProjectAssignmentReadDTO>();
+            CreateMap<TPLProjectAssignmentUpdateDTO, TPLProjectAssignment>();
+            CreateMap<TPLProjectAssignment, TPLProjectAssignmentReadDTO>();
+
+            // =========================================================================
+            // 18. DTOs for TPLOnboarding (New Employee Setup)
+            // =========================================================================
+
+            // Read Mapping
+            CreateMap<TPLOnboarding, TPLOnboardingReadDTO>();
+
+            // Create Mapping
+            CreateMap<TPLOnboardingCreateDTO, TPLOnboarding>()
+                .ForMember(dest => dest.OnboardingID, opt => opt.Ignore());
+
+            // Update Mapping
+            CreateMap<TPLOnboardingUpdateDTO, TPLOnboarding>();
+
+            // =========================================================================
+            // 19. DTOs for TPLOffboarding (Employee Exit Management)
+            // =========================================================================
+
+            // Read Mapping
+            CreateMap<TPLOffboarding, TPLOffboardingReadDTO>();
+
+            // Create Mapping
+            CreateMap<TPLOffboardingCreateDTO, TPLOffboarding>()
+                .ForMember(dest => dest.ExitID, opt => opt.Ignore());
+
+            // Update Mapping (Note: EmployeeID is NOT updated, only status and dates)
+            CreateMap<TPLOffboardingUpdateDTO, TPLOffboarding>()
+                .ForMember(dest => dest.EmployeeID, opt => opt.Ignore())
+                .ForAllMembers(opt => opt.Condition((src, dest, srcMember) => srcMember != null));
+
+            // =========================================================================
+            // 20. DTOs for TPLAssetManagement (Asset Tracking)
+            // =========================================================================
+
+            // Read Mapping
+            CreateMap<TPLAssetManagement, TPLAssetManagementReadDTO>();
+
+            // Create Mapping
+            CreateMap<TPLAssetManagementCreateDTO, TPLAssetManagement>()
+                .ForMember(dest => dest.AssetID, opt => opt.Ignore());
+
+            // Update Mapping
+            CreateMap<TPLAssetManagementUpdateDTO, TPLAssetManagement>()
+                .ForAllMembers(opt => opt.Condition((src, dest, srcMember) => srcMember != null));
 
         }
     }
