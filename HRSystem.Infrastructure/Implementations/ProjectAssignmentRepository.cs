@@ -8,7 +8,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-public class TPLProjectAssignmentRepository : GenericRepository<TPLProject_Assignment>, ITPLProjectAssignmentRepository
+public class TPLProjectAssignmentRepository : GenericRepository<TPLProjectAssignment>, ITPLProjectAssignmentRepository
 {
     private readonly HRSystemContext _context;
 
@@ -20,15 +20,47 @@ public class TPLProjectAssignmentRepository : GenericRepository<TPLProject_Assig
     // Logic: Check if the employee is already assigned to this specific project
     public async Task<bool> IsAssignedAsync(int employeeId, int projectId)
     {
-        return await _context.Set<TPLProject_Assignment>()
+        return await _context.Set<TPLProjectAssignment>()
             .AnyAsync(a => a.EmployeeID == employeeId && a.ProjectID == projectId);
     }
 
     // Reporting: Get all assignments for a specific project
-    public async Task<IEnumerable<TPLProject_Assignment>> GetAssignmentsByProjectIdAsync(int projectId)
+    public async Task<IEnumerable<TPLProjectAssignment>> GetAssignmentsByProjectIdAsync(int projectId)
     {
-        return await _context.Set<TPLProject_Assignment>()
+        // Note: Using the correct table name TPLProject_Assignment
+        return await _context.Set<TPLProjectAssignment>()
             .Where(a => a.ProjectID == projectId)
+            .ToListAsync();
+    }
+
+    // =========================================================================
+    // NEW: Get Assignments for the Current Employee (Self-Service Read)
+    // =========================================================================
+    public async Task<IEnumerable<TPLProjectAssignment>> GetMyAssignmentsAsync(int employeeId)
+    {
+        // Filters all records to show only those belonging to the given EmployeeID.
+        return await _context.Set<TPLProjectAssignment>()
+            .Where(a => a.EmployeeID == employeeId)
+            .ToListAsync();
+    }
+
+    // [New Override - Required to fix the InvalidOperationException issue]
+    public override async Task<TPLProjectAssignment?> GetByIdAsync(object id)
+    {
+        if (id is not int assignmentId)
+        {
+            return null;
+        }
+
+        return await _context.Set<TPLProjectAssignment>()
+            .FirstOrDefaultAsync(a => a.AssignmentID == assignmentId);
+    }
+
+    public async Task<IEnumerable<TPLProjectAssignment>> GetAssignmentsByEmployeeIdAsync(int employeeId)
+    {
+        // Filters all records to show only those belonging to the given EmployeeID.
+        return await _context.Set<TPLProjectAssignment>()
+            .Where(a => a.EmployeeID == employeeId)
             .ToListAsync();
     }
 }

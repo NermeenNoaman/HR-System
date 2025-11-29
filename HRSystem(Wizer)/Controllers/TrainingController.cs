@@ -21,19 +21,23 @@ public class TrainingController : ControllerBase
         _mapper = mapper;
     }
 
+   
+
+
     // =========================================================================
-    // POST: Create New Training Course
+    // POST: Create New Training Course (With Assignment Logic)
     // =========================================================================
     [HttpPost]
     [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(TPLTrainingReadDTO))]
     [ProducesResponseType(StatusCodes.Status409Conflict)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> CreateTraining([FromBody] TPLTrainingCreateDTO dto)
     {
-        // Validation: Check if training title already exists
-        var existing = await _trainingRepo.GetByTitleAsync(dto.Title);
-        if (existing != null)
+        // 1. Validation: Check if the assigned employee already has this training title
+        var existingAssignment = await _trainingRepo.IsEmployeeAssignedToTitleAsync(dto.EmployeeID, dto.Title);
+        if (existingAssignment != null)
         {
-            return Conflict(new { Message = $"Training title '{dto.Title}' already exists." });
+            return Conflict(new { Message = $"Employee {dto.EmployeeID} is already assigned a training with title '{dto.Title}'." });
         }
 
         var entity = _mapper.Map<TPLTraining>(dto);
@@ -45,7 +49,7 @@ public class TrainingController : ControllerBase
     }
 
     // =========================================================================
-    // GET: Get All Trainings
+    // GET: Get All Trainings (HR/Admin Only - Inherits Class-level Auth)
     // =========================================================================
     [HttpGet]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<TPLTrainingReadDTO>))]
@@ -57,7 +61,7 @@ public class TrainingController : ControllerBase
     }
 
     // =========================================================================
-    // GET: Get Training by ID
+    // GET: Get Training by ID (HR/Admin Only - Inherits Class-level Auth)
     // =========================================================================
     [HttpGet("{id}")]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(TPLTrainingReadDTO))]
@@ -73,8 +77,9 @@ public class TrainingController : ControllerBase
         return Ok(dto);
     }
 
+
     // =========================================================================
-    // PUT: Update Training Course
+    // PUT: Update Training Course (HR/Admin Only - Inherits Class-level Auth)
     // =========================================================================
     [HttpPut("{id}")]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(TPLTrainingReadDTO))]
@@ -98,7 +103,7 @@ public class TrainingController : ControllerBase
             }
         }
 
-        // Use AutoMapper to apply changes from DTO to the retrieved entity
+        // Apply AutoMapper to apply changes from DTO to the retrieved entity
         _mapper.Map(dto, entityToUpdate);
 
         await _trainingRepo.UpdateAsync(entityToUpdate);
@@ -109,7 +114,7 @@ public class TrainingController : ControllerBase
     }
 
     // =========================================================================
-    // DELETE: Delete Training Course
+    // DELETE: Delete Training Course (HR/Admin Only - Inherits Class-level Auth)
     // =========================================================================
     [HttpDelete("{id}")]
     [Authorize(Roles ="admin")]

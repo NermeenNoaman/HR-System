@@ -6,32 +6,36 @@ using Microsoft.EntityFrameworkCore;
 
 namespace HRSystem.BaseLibrary.Models;
 
-[Table("TPLProject_Assignment")]
-public partial class TPLProject_Assignment
+[Table("TPLProjectAssignment")]
+public partial class TPLProjectAssignment
 {
+    [Key]
+    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+    public int AssignmentID { get; set; } 
+
+    // Foreign Keys (EmployeeID and ProjectID are NOT identity columns)
+    [Required]
     public int EmployeeID { get; set; }
 
+    [Required]
     public int ProjectID { get; set; }
 
+    // Data Fields
     [Required]
     [StringLength(100)]
     public string RoleInProject { get; set; }
 
+    [Required]
     public int HoursWorked { get; set; }
-
-    [Key]
-    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-    public int assignment_id { get; set; }
 
     [Required]
     [StringLength(10)]
-    public string status { get; set; }
+    public string Status { get; set; }
 
+    // Navigation Properties
     [ForeignKey("EmployeeID")]
-    [InverseProperty("TPLProject_Assignments")]
-    public virtual TPLEmployee Employee { get; set; }
+    public virtual TPLEmployee Employee { get; set; } = null!; // Assuming NOT NULL relation
 
     [ForeignKey("ProjectID")]
-    [InverseProperty("TPLProject_Assignments")]
-    public virtual TPLProject Project { get; set; }
+    public virtual TPLProject Project { get; set; } = null!; // Assuming NOT NULL relation
 }

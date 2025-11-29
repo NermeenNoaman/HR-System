@@ -25,13 +25,18 @@ public class PermissionRequestController : ControllerBase
     // Helper to get the current User ID from the JWT Token
     private int GetCurrentUserId()
     {
-        var userIdClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
-        if (int.TryParse(userIdClaim, out int userId))
+        // 1. البحث عن الـ Claim المخصص "EmployeeID"
+        var employeeIdClaim = User.FindFirst("EmployeeID")?.Value;
+
+        // 2. محاولة تحويله إلى رقم صحيح
+        if (int.TryParse(employeeIdClaim, out int employeeId))
         {
-            return userId;
+            // هذا يضمن أننا نستخدم 202410 بدلاً من 107
+            return employeeId;
         }
-        // Handle case where user ID is missing or invalid
-        throw new UnauthorizedAccessException("User ID not found in token.");
+
+        // 3. التعامل مع حالة الـ ID غير الصالح أو المفقود
+        throw new UnauthorizedAccessException("Employee ID claim is missing or invalid in the token.");
     }
 
     // ----------------------------------------------------------------------

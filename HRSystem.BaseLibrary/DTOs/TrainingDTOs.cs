@@ -14,6 +14,8 @@ namespace HRSystem.BaseLibrary.DTOs
         public string Description { get; set; }
         public DateTime StartDate { get; set; }
         public DateTime EndDate { get; set; }
+        public int EmployeeID { get; set; }
+        public int TrainerID { get; set; }
     }
 
     public class TPLTrainingCreateDTO
@@ -29,17 +31,24 @@ namespace HRSystem.BaseLibrary.DTOs
 
         [Required]
         public DateTime EndDate { get; set; }
+
+        [Required]
+        public int EmployeeID { get; set; }
+        [Required]
+        public int TrainerID { get; set; }
     }
 
     public class TPLTrainingUpdateDTO
     {
         [StringLength(100)]
-        public string Title { get; set; }
+        public string? Title { get; set; }
 
-        public string Description { get; set; }
+        public string? Description { get; set; }
 
         public DateTime? StartDate { get; set; }
 
         public DateTime? EndDate { get; set; }
+        public int? EmployeeID { get; set; }
+        public int? TrainerID { get; set; }
     }
 }

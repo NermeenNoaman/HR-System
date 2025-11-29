@@ -11,8 +11,8 @@ namespace HRSystem.BaseLibrary.DTOs
     {
         public int OnboardingID { get; set; }
         public int EmployeeID { get; set; }
-        public DateOnly StartDate { get; set; }
-        public DateOnly EndDate { get; set; }
+        public DateTime StartDate { get; set; }
+        public DateTime EndDate { get; set; }
         public string AssignedMentor { get; set; }
         public string ChecklistStatus { get; set; }
     }

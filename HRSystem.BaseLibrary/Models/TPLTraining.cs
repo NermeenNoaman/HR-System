@@ -22,7 +22,7 @@ public partial class TPLTraining
     public DateTime StartDate { get; set; }
 
     public DateTime EndDate { get; set; }
+    public int EmployeeID { get; set; }  
+    public int TrainerID { get; set; }
 
-    [InverseProperty("Training")]
-    public virtual ICollection<TPLEmployee_Training> TPLEmployee_Trainings { get; set; } = new List<TPLEmployee_Training>();
 }

@@ -56,17 +56,10 @@ public partial class TPLEmployee
     [InverseProperty("Employee")]
     public virtual ICollection<TPLBenefitsCompensation> TPLBenefitsCompensations { get; set; } = new List<TPLBenefitsCompensation>();
 
-    [InverseProperty("Employee")]
-    public virtual ICollection<TPLDisciplinaryAction> TPLDisciplinaryActionEmployees { get; set; } = new List<TPLDisciplinaryAction>();
-
-    [InverseProperty("TakenByNavigation")]
-    public virtual ICollection<TPLDisciplinaryAction> TPLDisciplinaryActionTakenByNavigations { get; set; } = new List<TPLDisciplinaryAction>();
-
+    
     [InverseProperty("Employee")]
     public virtual ICollection<TPLDocumentManagement> TPLDocumentManagements { get; set; } = new List<TPLDocumentManagement>();
 
-    [InverseProperty("Employee")]
-    public virtual ICollection<TPLEmployee_Training> TPLEmployee_Trainings { get; set; } = new List<TPLEmployee_Training>();
 
     [InverseProperty("Interviewer")]
     public virtual ICollection<TPLInterview> TPLInterviews { get; set; } = new List<TPLInterview>();
@@ -86,8 +79,6 @@ public partial class TPLEmployee
     [InverseProperty("employee")]
     public virtual ICollection<TPLPermission> TPLPermissions { get; set; } = new List<TPLPermission>();
 
-    [InverseProperty("Employee")]
-    public virtual ICollection<TPLProject_Assignment> TPLProject_Assignments { get; set; } = new List<TPLProject_Assignment>();
 
     [InverseProperty("Manager")]
     public virtual ICollection<TPLProject> TPLProjects { get; set; } = new List<TPLProject>();
