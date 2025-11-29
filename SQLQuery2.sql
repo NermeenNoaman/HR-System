@@ -1,5 +1,4 @@
-﻿USE [HRSystem]
-
+﻿
 -- 1. موظف مبيعات جديد
 INSERT INTO [dbo].[TPLEmployee]
            ([Name]

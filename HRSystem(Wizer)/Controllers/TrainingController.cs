@@ -112,6 +112,7 @@ public class TrainingController : ControllerBase
     // DELETE: Delete Training Course
     // =========================================================================
     [HttpDelete("{id}")]
+    [Authorize(Roles ="admin")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> DeleteTraining(int id)

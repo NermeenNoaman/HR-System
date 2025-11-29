@@ -5,6 +5,7 @@ using HRSystem.Infrastructure.Contracts;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 [Route("api/[controller]")]
@@ -67,6 +68,20 @@ public class EmployeeTrainingController : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<TPLEmployeeTrainingReadDTO>))]
     public async Task<IActionResult> GetEmployeeTrainingRecord(int employeeId)
     {
+
+        var userRole = User.FindFirst(ClaimTypes.Role)?.Value;
+        var loggedInEmployeeIdClaim = User.FindFirst("EmployeeID")?.Value;
+
+        // نحتاج فقط لتنفيذ هذا الفحص إذا لم يكن المستخدم admin أو HR
+        if (userRole != "admin" && userRole != "HR")
+        {
+            // إذا كان المستخدم ليس مديراً، يجب أن يكون ID المطلوب هو IDه الخاص
+            if (loggedInEmployeeIdClaim == null || int.Parse(loggedInEmployeeIdClaim) != employeeId)
+            {
+                // منع الوصول: الموظف العادي يحاول رؤية ملف زميله
+                return Forbid(); // 403 Forbidden
+            }
+        }
         var entities = await _empTrainRepo.FindAsync(et => et.EmployeeID == employeeId);
         var dtos = _mapper.Map<IEnumerable<TPLEmployeeTrainingReadDTO>>(entities);
 
@@ -108,6 +123,7 @@ public class EmployeeTrainingController : ControllerBase
     // DELETE: Remove Enrollment Record (Delete)
     // =========================================================================
     [HttpDelete("employee/{employeeId}/training/{trainingId}")]
+    [Authorize (Roles ="admin")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> DeleteEmployeeTraining(int employeeId, int trainingId)

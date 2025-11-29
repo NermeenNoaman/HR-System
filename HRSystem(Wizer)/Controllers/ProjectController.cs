@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 [Route("api/[controller]")]
 [ApiController]
-[Authorize(Roles = "HR,admin")]
+[Authorize]
 public class ProjectController : ControllerBase
 {
     private readonly ITPLProjectRepository _projectRepo;
@@ -25,6 +25,7 @@ public class ProjectController : ControllerBase
     // POST: Create New Project (Logic previously defined)
     // =========================================================================
     [HttpPost]
+    [Authorize(Roles ="admin")]
     [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(TPLProjectReadDTO))]
     [ProducesResponseType(StatusCodes.Status409Conflict)]
     public async Task<IActionResult> CreateProject([FromBody] TPLProjectCreateDTO dto)
@@ -76,6 +77,7 @@ public class ProjectController : ControllerBase
     // PUT: Update Project Details (UPDATE)
     // =========================================================================
     [HttpPut("{id}")]
+    [Authorize(Roles ="admin")]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(TPLProjectReadDTO))]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -111,6 +113,7 @@ public class ProjectController : ControllerBase
     // DELETE: Delete Project (DELETE)
     // =========================================================================
     [HttpDelete("{id}")]
+    [Authorize(Roles = "admin")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> DeleteProject(int id)
