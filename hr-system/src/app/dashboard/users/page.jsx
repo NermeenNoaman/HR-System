@@ -140,224 +140,229 @@ export default function UsersPage() {
 
   if (!canView) {
     return (
-      <div className="max-w-4xl mx-auto">
-        <Card className="border-red-200 bg-red-50/50">
-          <CardContent className="p-6">
-            <p className="text-destructive font-medium">
-              You don't have permission to view this page.
-            </p>
-          </CardContent>
-        </Card>
+      <div className="min-h-screen bg-gradient-to-br from-purple-900 via-blue-900 to-purple-900 p-6">
+        <div className="max-w-4xl mx-auto">
+          <Card className="bg-gradient-to-br from-gray-800 to-gray-900 border-gray-700">
+            <CardContent className="p-6">
+              <p className="text-red-400 font-medium">
+                You don't have permission to view this page.
+              </p>
+            </CardContent>
+          </Card>
+        </div>
       </div>
     )
   }
 
   return (
-    <div className="max-w-7xl mx-auto space-y-6">
-      <div className="flex justify-between items-center">
-        <div>
-          <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-600 via-purple-600 to-blue-600 bg-clip-text text-transparent">
-            Users Management
-          </h1>
-          <p className="text-gray-600 mt-2">Manage system users and their roles</p>
+    <div className="min-h-screen bg-gradient-to-br from-purple-900 via-blue-900 to-purple-900 p-6">
+      <div className="max-w-7xl mx-auto space-y-6">
+        <div className="flex justify-between items-center">
+          <div>
+            <h1 className="text-4xl font-bold text-cyan-400 mb-2">Users Management</h1>
+            <p className="text-gray-300">Manage system users and their roles</p>
+          </div>
         </div>
-      </div>
 
-      {error && (
-        <div className="p-3 text-sm text-destructive bg-destructive/10 rounded-md border border-destructive/20">
-          {error}
-        </div>
-      )}
+        {error && (
+          <div className="p-3 text-sm text-red-400 bg-red-900/20 rounded-md border border-red-700">
+            {error}
+          </div>
+        )}
 
-      {success && (
-        <div className="p-3 text-sm text-green-700 bg-green-50 rounded-md border border-green-200">
-          {success}
-        </div>
-      )}
+        {success && (
+          <div className="p-3 text-sm text-green-400 bg-green-900/20 rounded-md border border-green-700">
+            {success}
+          </div>
+        )}
 
-      {/* Role Update Modal */}
-      {showRoleUpdate && (
-        <Card className="border-2 border-purple-200">
+        {/* Role Update Modal */}
+        {showRoleUpdate && (
+          <Card className="bg-gradient-to-br from-gray-800 to-gray-900 border-gray-700 border-2 border-purple-500">
+            <CardHeader>
+              <CardTitle className="text-white">Update User Role</CardTitle>
+              <CardDescription className="text-gray-400">
+                Change the role for user ID: {updatingUserId}
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <form onSubmit={handleRoleUpdateSubmit} className="space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="newRole" className="text-gray-300">
+                    New Role <span className="text-red-400">*</span>
+                  </Label>
+                  <select
+                    id="newRole"
+                    value={newRole}
+                    onChange={(e) => setNewRole(e.target.value)}
+                    required
+                    className="flex h-10 w-full rounded-md border border-gray-600 bg-gray-700 text-white px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-800 disabled:cursor-not-allowed disabled:opacity-50"
+                  >
+                    <option value="">Select a role</option>
+                    <option value="admin">Admin</option>
+                    <option value="HR">HR</option>
+                    <option value="Employee">Employee</option>
+                  </select>
+                </div>
+
+                <div className="flex gap-2 justify-end">
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={() => {
+                      setShowRoleUpdate(false)
+                      setUpdatingUserId(null)
+                      setNewRole("")
+                      setError("")
+                    }}
+                    className="border-gray-600 text-gray-300 hover:bg-gray-700"
+                  >
+                    Cancel
+                  </Button>
+                  <Button
+                    type="submit"
+                    className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white"
+                  >
+                    Update Role
+                  </Button>
+                </div>
+              </form>
+            </CardContent>
+          </Card>
+        )}
+
+        {/* User Details Modal */}
+        {showUserDetails && selectedUser && (
+          <Card className="bg-gradient-to-br from-gray-800 to-gray-900 border-gray-700">
+            <CardHeader>
+              <CardTitle className="text-white">User Details</CardTitle>
+              <CardDescription className="text-gray-400">Detailed information about the user</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <Label className="text-sm text-gray-400">User ID</Label>
+                  <p className="font-medium text-white">{selectedUser.userId}</p>
+                </div>
+                <div>
+                  <Label className="text-sm text-gray-400">Username</Label>
+                  <p className="font-medium text-white">{selectedUser.username || "-"}</p>
+                </div>
+                <div>
+                  <Label className="text-sm text-gray-400">Employee ID</Label>
+                  <p className="font-medium text-white">{selectedUser.employeeId || "-"}</p>
+                </div>
+                <div>
+                  <Label className="text-sm text-gray-400">Role</Label>
+                  <span
+                    className={`inline-block px-3 py-1 rounded-full text-sm font-medium ${getRoleBadgeColor(
+                      selectedUser.role
+                    )}`}
+                  >
+                    {selectedUser.role || "-"}
+                  </span>
+                </div>
+              </div>
+              <div className="flex justify-end">
+                <Button
+                  variant="outline"
+                  onClick={() => {
+                    setShowUserDetails(false)
+                    setSelectedUser(null)
+                  }}
+                  className="border-gray-600 text-gray-300 hover:bg-gray-700"
+                >
+                  Close
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
+        <Card className="bg-gradient-to-br from-gray-800 to-gray-900 border-gray-700">
           <CardHeader>
-            <CardTitle>Update User Role</CardTitle>
-            <CardDescription>
-              Change the role for user ID: {updatingUserId}
+            <CardTitle className="text-white">Users List</CardTitle>
+            <CardDescription className="text-gray-400">
+              {users.length} user{users.length !== 1 ? "s" : ""} found in the system
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <form onSubmit={handleRoleUpdateSubmit} className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="newRole">
-                  New Role <span className="text-destructive">*</span>
-                </Label>
-                <select
-                  id="newRole"
-                  value={newRole}
-                  onChange={(e) => setNewRole(e.target.value)}
-                  required
-                  className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                >
-                  <option value="">Select a role</option>
-                  <option value="admin">Admin</option>
-                  <option value="HR">HR</option>
-                  <option value="Employee">Employee</option>
-                </select>
-              </div>
-
-              <div className="flex gap-2 justify-end">
-                <Button
-                  type="button"
-                  variant="outline"
-                  onClick={() => {
-                    setShowRoleUpdate(false)
-                    setUpdatingUserId(null)
-                    setNewRole("")
-                    setError("")
-                  }}
-                >
-                  Cancel
-                </Button>
-                <Button
-                  type="submit"
-                  className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white"
-                >
-                  Update Role
-                </Button>
-              </div>
-            </form>
-          </CardContent>
-        </Card>
-      )}
-
-      {/* User Details Modal */}
-      {showUserDetails && selectedUser && (
-        <Card>
-          <CardHeader>
-            <CardTitle>User Details</CardTitle>
-            <CardDescription>Detailed information about the user</CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <Label className="text-sm text-muted-foreground">User ID</Label>
-                <p className="font-medium">{selectedUser.userId}</p>
-              </div>
-              <div>
-                <Label className="text-sm text-muted-foreground">Username</Label>
-                <p className="font-medium">{selectedUser.username || "-"}</p>
-              </div>
-              <div>
-                <Label className="text-sm text-muted-foreground">Employee ID</Label>
-                <p className="font-medium">{selectedUser.employeeId || "-"}</p>
-              </div>
-              <div>
-                <Label className="text-sm text-muted-foreground">Role</Label>
-                <span
-                  className={`inline-block px-3 py-1 rounded-full text-sm font-medium ${getRoleBadgeColor(
-                    selectedUser.role
-                  )}`}
-                >
-                  {selectedUser.role || "-"}
-                </span>
-              </div>
-            </div>
-            <div className="flex justify-end">
-              <Button
-                variant="outline"
-                onClick={() => {
-                  setShowUserDetails(false)
-                  setSelectedUser(null)
-                }}
-              >
-                Close
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
-      )}
-
-      <Card>
-        <CardHeader>
-          <CardTitle>Users List</CardTitle>
-          <CardDescription>
-            {users.length} user{users.length !== 1 ? "s" : ""} found in the system
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          {loading ? (
-            <p className="text-center py-8 text-muted-foreground">Loading...</p>
-          ) : users.length === 0 ? (
-            <p className="text-center py-8 text-muted-foreground">
-              No users found
-            </p>
-          ) : (
-            <div className="overflow-x-auto">
-              <table className="w-full border-collapse">
-                <thead>
-                  <tr className="border-b">
-                    <th className="text-left p-3 font-semibold">ID</th>
-                    <th className="text-left p-3 font-semibold">Username</th>
-                    <th className="text-left p-3 font-semibold">Employee ID</th>
-                    <th className="text-left p-3 font-semibold">Role</th>
-                    <th className="text-left p-3 font-semibold">Actions</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {users.map((user) => (
-                    <tr key={user.userId} className="border-b hover:bg-muted/50">
-                      <td className="p-3">{user.userId}</td>
-                      <td className="p-3 font-medium">{user.username || "-"}</td>
-                      <td className="p-3">{user.employeeId || "-"}</td>
-                      <td className="p-3">
-                        <span
-                          className={`inline-block px-3 py-1 rounded-full text-sm font-medium ${getRoleBadgeColor(
-                            user.role
-                          )}`}
-                        >
-                          {user.role || "-"}
-                        </span>
-                      </td>
-                      <td className="p-3">
-                        <div className="flex gap-2">
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => handleViewUser(user.userId)}
-                            title="View Details"
-                          >
-                            <FiEye size={16} />
-                          </Button>
-                          {isAdmin && (
-                            <>
-                              <Button
-                                variant="outline"
-                                size="sm"
-                                onClick={() => handleUpdateRole(user.userId, user.role)}
-                                title="Update Role"
-                                className="text-blue-600 hover:text-blue-700"
-                              >
-                                <FiEdit2 size={16} />
-                              </Button>
-                              <Button
-                                variant="destructive"
-                                size="sm"
-                                onClick={() => handleDelete(user.userId)}
-                                title="Delete User"
-                              >
-                                <FiTrash2 size={16} />
-                              </Button>
-                            </>
-                          )}
-                        </div>
-                      </td>
+            {loading ? (
+              <p className="text-center py-8 text-gray-400">Loading...</p>
+            ) : users.length === 0 ? (
+              <p className="text-center py-8 text-gray-400">
+                No users found
+              </p>
+            ) : (
+              <div className="overflow-x-auto">
+                <table className="w-full border-collapse">
+                  <thead>
+                    <tr className="border-b border-gray-700">
+                      <th className="text-left p-3 font-semibold text-gray-300">ID</th>
+                      <th className="text-left p-3 font-semibold text-gray-300">Username</th>
+                      <th className="text-left p-3 font-semibold text-gray-300">Employee ID</th>
+                      <th className="text-left p-3 font-semibold text-gray-300">Role</th>
+                      <th className="text-left p-3 font-semibold text-gray-300">Actions</th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          )}
-        </CardContent>
-      </Card>
+                  </thead>
+                  <tbody>
+                    {users.map((user) => (
+                      <tr key={user.userId} className="border-b border-gray-700 hover:bg-gray-800/50 transition-colors">
+                        <td className="p-3 text-gray-300">{user.userId}</td>
+                        <td className="p-3 font-medium text-white">{user.username || "-"}</td>
+                        <td className="p-3 text-gray-300">{user.employeeId || "-"}</td>
+                        <td className="p-3">
+                          <span
+                            className={`inline-block px-3 py-1 rounded-full text-sm font-medium ${getRoleBadgeColor(
+                              user.role
+                            )}`}
+                          >
+                            {user.role || "-"}
+                          </span>
+                        </td>
+                        <td className="p-3">
+                          <div className="flex gap-2">
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => handleViewUser(user.userId)}
+                              title="View Details"
+                              className="border-gray-600 text-gray-300 hover:bg-gray-700"
+                            >
+                              <FiEye size={16} />
+                            </Button>
+                            {isAdmin && (
+                              <>
+                                <Button
+                                  variant="outline"
+                                  size="sm"
+                                  onClick={() => handleUpdateRole(user.userId, user.role)}
+                                  title="Update Role"
+                                  className="border-gray-600 text-blue-400 hover:bg-gray-700 hover:text-blue-300"
+                                >
+                                  <FiEdit2 size={16} />
+                                </Button>
+                                <Button
+                                  variant="destructive"
+                                  size="sm"
+                                  onClick={() => handleDelete(user.userId)}
+                                  title="Delete User"
+                                >
+                                  <FiTrash2 size={16} />
+                                </Button>
+                              </>
+                            )}
+                          </div>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+          </CardContent>
+        </Card>
+      </div>
     </div>
   )
 }

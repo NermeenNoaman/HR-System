@@ -262,42 +262,41 @@ export default function BranchesPage() {
   }
 
   return (
-    <div className="max-w-7xl mx-auto space-y-6">
-      <div className="flex justify-between items-center">
-        <div>
-          <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-600 via-purple-600 to-blue-600 bg-clip-text text-transparent">
-            Company Branches
-          </h1>
-          <p className="text-gray-600 mt-2">Manage company branch information</p>
+    <div className="min-h-screen bg-gradient-to-br from-purple-900 via-blue-900 to-purple-900 p-6">
+      <div className="max-w-7xl mx-auto space-y-6">
+        <div className="flex justify-between items-center">
+          <div>
+            <h1 className="text-4xl font-bold text-cyan-400 mb-2">Company Branches</h1>
+            <p className="text-gray-300">Manage company branch information</p>
+          </div>
+          {isAdmin && (
+            <Button 
+              onClick={handleNew}
+              className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white shadow-lg"
+            >
+              Create New Branch
+            </Button>
+          )}
         </div>
-        {isAdmin && (
-          <Button 
-            onClick={handleNew}
-            className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white shadow-lg"
-          >
-            Create New Branch
-          </Button>
-        )}
-      </div>
 
-      {error && !showForm && (
-        <div className="p-3 text-sm text-destructive bg-destructive/10 rounded-md border border-destructive/20">
-          {error}
-        </div>
-      )}
+        {error && !showForm && (
+          <div className="p-3 text-sm text-red-400 bg-red-900/20 rounded-md border border-red-700">
+            {error}
+          </div>
+        )}
 
       {/* Company Filter */}
-      <Card>
+      <Card className="bg-gradient-to-br from-gray-800 to-gray-900 border-gray-700">
         <CardContent className="p-4">
           <div className="flex items-center gap-4">
-            <Label htmlFor="companyFilter" className="whitespace-nowrap">
+            <Label htmlFor="companyFilter" className="whitespace-nowrap text-gray-300">
               Filter by Company:
             </Label>
             <select
               id="companyFilter"
               value={selectedCompanyFilter}
               onChange={(e) => setSelectedCompanyFilter(e.target.value)}
-              className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 max-w-xs"
+              className="flex h-10 w-full rounded-md border border-gray-600 bg-gray-700 text-white px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-800 disabled:cursor-not-allowed disabled:opacity-50 max-w-xs"
             >
               <option value="">All Companies</option>
               {companies.map((company) => (
@@ -311,10 +310,10 @@ export default function BranchesPage() {
       </Card>
 
       {showForm && (
-        <Card>
+        <Card className="bg-gradient-to-br from-gray-800 to-gray-900 border-gray-700">
           <CardHeader>
-            <CardTitle>{editingBranch ? "Edit Branch" : "Create Branch"}</CardTitle>
-            <CardDescription>
+            <CardTitle className="text-white">{editingBranch ? "Edit Branch" : "Create Branch"}</CardTitle>
+            <CardDescription className="text-gray-400">
               {editingBranch
                 ? "Update the branch information"
                 : "Enter the branch information"}
@@ -323,15 +322,15 @@ export default function BranchesPage() {
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-4">
               {error && (
-                <div className="p-3 text-sm text-destructive bg-destructive/10 rounded-md border border-destructive/20">
+                <div className="p-3 text-sm text-red-400 bg-red-900/20 rounded-md border border-red-700">
                   {error}
                 </div>
               )}
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label htmlFor="companyId">
-                    Company <span className="text-destructive">*</span>
+                  <Label htmlFor="companyId" className="text-gray-300">
+                    Company <span className="text-red-400">*</span>
                   </Label>
                   <select
                     id="companyId"
@@ -340,7 +339,7 @@ export default function BranchesPage() {
                     onChange={handleInputChange}
                     required
                     disabled={!!editingBranch}
-                    className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                    className="flex h-10 w-full rounded-md border border-gray-600 bg-gray-700 text-white px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-800 disabled:cursor-not-allowed disabled:opacity-50"
                   >
                     <option value="">Select a company</option>
                     {companies.map((company) => (
@@ -350,13 +349,13 @@ export default function BranchesPage() {
                     ))}
                   </select>
                   {formErrors.companyId && (
-                    <p className="text-sm text-destructive">{formErrors.companyId}</p>
+                    <p className="text-sm text-red-400">{formErrors.companyId}</p>
                   )}
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="code">
-                    Branch Code <span className="text-destructive">*</span>
+                  <Label htmlFor="code" className="text-gray-300">
+                    Branch Code <span className="text-red-400">*</span>
                   </Label>
                   <Input
                     id="code"
@@ -365,15 +364,16 @@ export default function BranchesPage() {
                     onChange={handleInputChange}
                     required
                     placeholder="BR004"
+                    className="bg-gray-700 border-gray-600 text-white placeholder:text-gray-400 focus:border-cyan-400"
                   />
                   {formErrors.code && (
-                    <p className="text-sm text-destructive">{formErrors.code}</p>
+                    <p className="text-sm text-red-400">{formErrors.code}</p>
                   )}
                 </div>
 
                 <div className="space-y-2 md:col-span-2">
-                  <Label htmlFor="nameEn">
-                    Branch Name (English) <span className="text-destructive">*</span>
+                  <Label htmlFor="nameEn" className="text-gray-300">
+                    Branch Name (English) <span className="text-red-400">*</span>
                   </Label>
                   <Input
                     id="nameEn"
@@ -382,14 +382,15 @@ export default function BranchesPage() {
                     onChange={handleInputChange}
                     required
                     placeholder="New Cairo Branch"
+                    className="bg-gray-700 border-gray-600 text-white placeholder:text-gray-400 focus:border-cyan-400"
                   />
                   {formErrors.nameEn && (
-                    <p className="text-sm text-destructive">{formErrors.nameEn}</p>
+                    <p className="text-sm text-red-400">{formErrors.nameEn}</p>
                   )}
                 </div>
 
                 <div className="space-y-2 md:col-span-2">
-                  <Label htmlFor="description">Description</Label>
+                  <Label htmlFor="description" className="text-gray-300">Description</Label>
                   <textarea
                     id="description"
                     name="description"
@@ -397,7 +398,7 @@ export default function BranchesPage() {
                     onChange={handleInputChange}
                     placeholder="New branch in New Cairo"
                     rows={3}
-                    className="flex min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                    className="flex min-h-[80px] w-full rounded-md border border-gray-600 bg-gray-700 text-white px-3 py-2 text-sm placeholder:text-gray-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-800 disabled:cursor-not-allowed disabled:opacity-50"
                   />
                 </div>
               </div>
@@ -412,10 +413,11 @@ export default function BranchesPage() {
                     setFormErrors({})
                     setError("")
                   }}
+                  className="border-gray-600 text-gray-300 hover:bg-gray-700"
                 >
                   Cancel
                 </Button>
-                <Button type="submit">
+                <Button type="submit" className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700">
                   {editingBranch ? "Update" : "Create"}
                 </Button>
               </div>
@@ -424,42 +426,42 @@ export default function BranchesPage() {
         </Card>
       )}
 
-      <Card>
+      <Card className="bg-gradient-to-br from-gray-800 to-gray-900 border-gray-700">
         <CardHeader>
-          <CardTitle>Branches List</CardTitle>
-          <CardDescription>
+          <CardTitle className="text-white">Branches List</CardTitle>
+          <CardDescription className="text-gray-400">
             {branches.length} branch{branches.length !== 1 ? "es" : ""} found
             {selectedCompanyFilter && ` for ${getCompanyName(parseInt(selectedCompanyFilter))}`}
           </CardDescription>
         </CardHeader>
         <CardContent>
           {loading ? (
-            <p className="text-center py-8 text-muted-foreground">Loading...</p>
+            <p className="text-center py-8 text-gray-400">Loading...</p>
           ) : branches.length === 0 ? (
-            <p className="text-center py-8 text-muted-foreground">
+            <p className="text-center py-8 text-gray-400">
               No branches found
             </p>
           ) : (
             <div className="overflow-x-auto">
               <table className="w-full border-collapse">
                 <thead>
-                  <tr className="border-b">
-                    <th className="text-left p-3 font-semibold">ID</th>
-                    <th className="text-left p-3 font-semibold">Code</th>
-                    <th className="text-left p-3 font-semibold">Branch Name</th>
-                    <th className="text-left p-3 font-semibold">Company</th>
-                    <th className="text-left p-3 font-semibold">Description</th>
-                    {isAdmin && <th className="text-left p-3 font-semibold">Actions</th>}
+                  <tr className="border-b border-gray-700">
+                    <th className="text-left p-3 font-semibold text-gray-300">ID</th>
+                    <th className="text-left p-3 font-semibold text-gray-300">Code</th>
+                    <th className="text-left p-3 font-semibold text-gray-300">Branch Name</th>
+                    <th className="text-left p-3 font-semibold text-gray-300">Company</th>
+                    <th className="text-left p-3 font-semibold text-gray-300">Description</th>
+                    {isAdmin && <th className="text-left p-3 font-semibold text-gray-300">Actions</th>}
                   </tr>
                 </thead>
                 <tbody>
                   {branches.map((branch) => (
-                    <tr key={branch.branchId} className="border-b hover:bg-muted/50">
-                      <td className="p-3">{branch.branchId}</td>
-                      <td className="p-3 font-medium">{branch.code}</td>
-                      <td className="p-3">{branch.nameEn}</td>
-                      <td className="p-3">{getCompanyName(branch.companyId)}</td>
-                      <td className="p-3">{branch.description || "-"}</td>
+                    <tr key={branch.branchId} className="border-b border-gray-700 hover:bg-gray-800/50 transition-colors">
+                      <td className="p-3 text-gray-300">{branch.branchId}</td>
+                      <td className="p-3 font-medium text-white">{branch.code}</td>
+                      <td className="p-3 text-gray-300">{branch.nameEn}</td>
+                      <td className="p-3 text-gray-300">{getCompanyName(branch.companyId)}</td>
+                      <td className="p-3 text-gray-300">{branch.description || "-"}</td>
                       {isAdmin && (
                         <td className="p-3">
                           <div className="flex gap-2">
@@ -467,6 +469,7 @@ export default function BranchesPage() {
                               variant="outline"
                               size="sm"
                               onClick={() => handleEdit(branch.branchId)}
+                              className="border-gray-600 text-gray-300 hover:bg-gray-700"
                             >
                               Edit
                             </Button>
@@ -488,6 +491,7 @@ export default function BranchesPage() {
           )}
         </CardContent>
       </Card>
+      </div>
     </div>
   )
 }

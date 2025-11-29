@@ -218,46 +218,47 @@ export default function CompanyProfilesPage() {
 
   if (!canView) {
     return (
-      <div className="container mx-auto p-6">
-        <Card>
-          <CardContent className="p-6">
-            <p className="text-destructive">You don't have permission to view this page.</p>
-          </CardContent>
-        </Card>
+      <div className="min-h-screen bg-gradient-to-br from-purple-900 via-blue-900 to-purple-900 p-6">
+        <div className="max-w-7xl mx-auto">
+          <Card className="bg-gradient-to-br from-gray-800 to-gray-900 border-gray-700">
+            <CardContent className="p-6">
+              <p className="text-red-400">You don't have permission to view this page.</p>
+            </CardContent>
+          </Card>
+        </div>
       </div>
     )
   }
 
   return (
-    <div className="max-w-7xl mx-auto space-y-6">
-      <div className="flex justify-between items-center">
-        <div>
-          <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-600 via-purple-600 to-blue-600 bg-clip-text text-transparent">
-            Company Profiles
-          </h1>
-          <p className="text-gray-600 mt-2">Manage company profile information</p>
+    <div className="min-h-screen bg-gradient-to-br from-purple-900 via-blue-900 to-purple-900 p-6">
+      <div className="max-w-7xl mx-auto space-y-6">
+        <div className="flex justify-between items-center">
+          <div>
+            <h1 className="text-4xl font-bold text-cyan-400 mb-2">Company Profiles</h1>
+            <p className="text-gray-300">Manage company profile information</p>
+          </div>
+          {isAdmin && (
+            <Button 
+              onClick={handleNew}
+              className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white shadow-lg"
+            >
+              Create New Profile
+            </Button>
+          )}
         </div>
-        {isAdmin && (
-          <Button 
-            onClick={handleNew}
-            className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white shadow-lg"
-          >
-            Create New Profile
-          </Button>
+
+        {error && !showForm && (
+          <div className="p-3 text-sm text-red-400 bg-red-900/20 rounded-md border border-red-700">
+            {error}
+          </div>
         )}
-      </div>
 
-      {error && !showForm && (
-        <div className="p-3 text-sm text-destructive bg-destructive/10 rounded-md border border-destructive/20">
-          {error}
-        </div>
-      )}
-
-      {showForm && (
-        <Card>
+        {showForm && (
+          <Card className="bg-gradient-to-br from-gray-800 to-gray-900 border-gray-700">
           <CardHeader>
-            <CardTitle>{editingProfile ? "Edit Company Profile" : "Create Company Profile"}</CardTitle>
-            <CardDescription>
+            <CardTitle className="text-white">{editingProfile ? "Edit Company Profile" : "Create Company Profile"}</CardTitle>
+            <CardDescription className="text-gray-400">
               {editingProfile
                 ? "Update the company profile information"
                 : "Enter the company profile information"}
@@ -266,15 +267,15 @@ export default function CompanyProfilesPage() {
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-4">
               {error && (
-                <div className="p-3 text-sm text-destructive bg-destructive/10 rounded-md border border-destructive/20">
+                <div className="p-3 text-sm text-red-400 bg-red-900/20 rounded-md border border-red-700">
                   {error}
                 </div>
               )}
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label htmlFor="nameEn">
-                    Company Name (English) <span className="text-destructive">*</span>
+                  <Label htmlFor="nameEn" className="text-gray-300">
+                    Company Name (English) <span className="text-red-400">*</span>
                   </Label>
                   <Input
                     id="nameEn"
@@ -284,15 +285,16 @@ export default function CompanyProfilesPage() {
                     required
                     maxLength={150}
                     placeholder="TechCorp Ltd"
+                    className="bg-gray-700 border-gray-600 text-white placeholder:text-gray-400 focus:border-cyan-400"
                   />
                   {formErrors.nameEn && (
-                    <p className="text-sm text-destructive">{formErrors.nameEn}</p>
+                    <p className="text-sm text-red-400">{formErrors.nameEn}</p>
                   )}
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="taxNumber">
-                    Tax Number <span className="text-destructive">*</span>
+                  <Label htmlFor="taxNumber" className="text-gray-300">
+                    Tax Number <span className="text-red-400">*</span>
                   </Label>
                   <Input
                     id="taxNumber"
@@ -302,14 +304,15 @@ export default function CompanyProfilesPage() {
                     required
                     maxLength={15}
                     placeholder="TX987654"
+                    className="bg-gray-700 border-gray-600 text-white placeholder:text-gray-400 focus:border-cyan-400"
                   />
                   {formErrors.taxNumber && (
-                    <p className="text-sm text-destructive">{formErrors.taxNumber}</p>
+                    <p className="text-sm text-red-400">{formErrors.taxNumber}</p>
                   )}
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="insuranceNumber">Insurance Number</Label>
+                  <Label htmlFor="insuranceNumber" className="text-gray-300">Insurance Number</Label>
                   <Input
                     id="insuranceNumber"
                     name="insuranceNumber"
@@ -317,39 +320,42 @@ export default function CompanyProfilesPage() {
                     onChange={handleInputChange}
                     maxLength={10}
                     placeholder="1234567890"
+                    className="bg-gray-700 border-gray-600 text-white placeholder:text-gray-400 focus:border-cyan-400"
                   />
                   {formErrors.insuranceNumber && (
-                    <p className="text-sm text-destructive">{formErrors.insuranceNumber}</p>
+                    <p className="text-sm text-red-400">{formErrors.insuranceNumber}</p>
                   )}
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="phoneNumber">Phone Number</Label>
+                  <Label htmlFor="phoneNumber" className="text-gray-300">Phone Number</Label>
                   <Input
                     id="phoneNumber"
                     name="phoneNumber"
                     value={formData.phoneNumber}
                     onChange={handleInputChange}
                     placeholder="+201234567890"
+                    className="bg-gray-700 border-gray-600 text-white placeholder:text-gray-400 focus:border-cyan-400"
                   />
                   {formErrors.phoneNumber && (
-                    <p className="text-sm text-destructive">{formErrors.phoneNumber}</p>
+                    <p className="text-sm text-red-400">{formErrors.phoneNumber}</p>
                   )}
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="faxNumber">Fax Number</Label>
+                  <Label htmlFor="faxNumber" className="text-gray-300">Fax Number</Label>
                   <Input
                     id="faxNumber"
                     name="faxNumber"
                     value={formData.faxNumber}
                     onChange={handleInputChange}
                     placeholder="0201234567"
+                    className="bg-gray-700 border-gray-600 text-white placeholder:text-gray-400 focus:border-cyan-400"
                   />
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="email">Email</Label>
+                  <Label htmlFor="email" className="text-gray-300">Email</Label>
                   <Input
                     id="email"
                     name="email"
@@ -357,14 +363,15 @@ export default function CompanyProfilesPage() {
                     value={formData.email}
                     onChange={handleInputChange}
                     placeholder="info@techcorp.com"
+                    className="bg-gray-700 border-gray-600 text-white placeholder:text-gray-400 focus:border-cyan-400"
                   />
                   {formErrors.email && (
-                    <p className="text-sm text-destructive">{formErrors.email}</p>
+                    <p className="text-sm text-red-400">{formErrors.email}</p>
                   )}
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="webSite">Website</Label>
+                  <Label htmlFor="webSite" className="text-gray-300">Website</Label>
                   <Input
                     id="webSite"
                     name="webSite"
@@ -372,17 +379,19 @@ export default function CompanyProfilesPage() {
                     value={formData.webSite}
                     onChange={handleInputChange}
                     placeholder="https://techcorp.com"
+                    className="bg-gray-700 border-gray-600 text-white placeholder:text-gray-400 focus:border-cyan-400"
                   />
                 </div>
 
                 <div className="space-y-2 md:col-span-2">
-                  <Label htmlFor="address">Address</Label>
+                  <Label htmlFor="address" className="text-gray-300">Address</Label>
                   <Input
                     id="address"
                     name="address"
                     value={formData.address}
                     onChange={handleInputChange}
                     placeholder="Cairo, Egypt"
+                    className="bg-gray-700 border-gray-600 text-white placeholder:text-gray-400 focus:border-cyan-400"
                   />
                 </div>
               </div>
@@ -397,10 +406,11 @@ export default function CompanyProfilesPage() {
                     setFormErrors({})
                     setError("")
                   }}
+                  className="border-gray-600 text-gray-300 hover:bg-gray-700"
                 >
                   Cancel
                 </Button>
-                <Button type="submit">
+                <Button type="submit" className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700">
                   {editingProfile ? "Update" : "Create"}
                 </Button>
               </div>
@@ -409,43 +419,43 @@ export default function CompanyProfilesPage() {
         </Card>
       )}
 
-      <Card>
+      <Card className="bg-gradient-to-br from-gray-800 to-gray-900 border-gray-700">
         <CardHeader>
-          <CardTitle>Company Profiles List</CardTitle>
-          <CardDescription>
+          <CardTitle className="text-white">Company Profiles List</CardTitle>
+          <CardDescription className="text-gray-400">
             {profiles.length} company profile{profiles.length !== 1 ? "s" : ""} found
           </CardDescription>
         </CardHeader>
         <CardContent>
           {loading ? (
-            <p className="text-center py-8 text-muted-foreground">Loading...</p>
+            <p className="text-center py-8 text-gray-400">Loading...</p>
           ) : profiles.length === 0 ? (
-            <p className="text-center py-8 text-muted-foreground">
+            <p className="text-center py-8 text-gray-400">
               No company profiles found
             </p>
           ) : (
             <div className="overflow-x-auto">
               <table className="w-full border-collapse">
                 <thead>
-                  <tr className="border-b">
-                    <th className="text-left p-3 font-semibold">ID</th>
-                    <th className="text-left p-3 font-semibold">Company Name</th>
-                    <th className="text-left p-3 font-semibold">Tax Number</th>
-                    <th className="text-left p-3 font-semibold">Email</th>
-                    <th className="text-left p-3 font-semibold">Phone</th>
-                    <th className="text-left p-3 font-semibold">Address</th>
-                    {isAdmin && <th className="text-left p-3 font-semibold">Actions</th>}
+                  <tr className="border-b border-gray-700">
+                    <th className="text-left p-3 font-semibold text-gray-300">ID</th>
+                    <th className="text-left p-3 font-semibold text-gray-300">Company Name</th>
+                    <th className="text-left p-3 font-semibold text-gray-300">Tax Number</th>
+                    <th className="text-left p-3 font-semibold text-gray-300">Email</th>
+                    <th className="text-left p-3 font-semibold text-gray-300">Phone</th>
+                    <th className="text-left p-3 font-semibold text-gray-300">Address</th>
+                    {isAdmin && <th className="text-left p-3 font-semibold text-gray-300">Actions</th>}
                   </tr>
                 </thead>
                 <tbody>
                   {profiles.map((profile) => (
-                    <tr key={profile.companyProfileId} className="border-b hover:bg-muted/50">
-                      <td className="p-3">{profile.companyProfileId}</td>
-                      <td className="p-3 font-medium">{profile.nameEn}</td>
-                      <td className="p-3">{profile.taxNumber}</td>
-                      <td className="p-3">{profile.email || "-"}</td>
-                      <td className="p-3">{profile.phoneNumber || "-"}</td>
-                      <td className="p-3">{profile.address || "-"}</td>
+                    <tr key={profile.companyProfileId} className="border-b border-gray-700 hover:bg-gray-800/50 transition-colors">
+                      <td className="p-3 text-gray-300">{profile.companyProfileId}</td>
+                      <td className="p-3 font-medium text-white">{profile.nameEn}</td>
+                      <td className="p-3 text-gray-300">{profile.taxNumber}</td>
+                      <td className="p-3 text-gray-300">{profile.email || "-"}</td>
+                      <td className="p-3 text-gray-300">{profile.phoneNumber || "-"}</td>
+                      <td className="p-3 text-gray-300">{profile.address || "-"}</td>
                       {isAdmin && (
                         <td className="p-3">
                           <div className="flex gap-2">
@@ -453,6 +463,7 @@ export default function CompanyProfilesPage() {
                               variant="outline"
                               size="sm"
                               onClick={() => handleEdit(profile.companyProfileId)}
+                              className="border-gray-600 text-gray-300 hover:bg-gray-700"
                             >
                               Edit
                             </Button>
@@ -474,6 +485,7 @@ export default function CompanyProfilesPage() {
           )}
         </CardContent>
       </Card>
+      </div>
     </div>
   )
 }

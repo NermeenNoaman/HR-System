@@ -277,27 +277,28 @@ export default function DepartmentsPage() {
 
   if (!canView) {
     return (
-      <div className="max-w-4xl mx-auto">
-        <Card className="border-red-200 bg-red-50/50">
-          <CardContent className="p-6">
-            <p className="text-destructive font-medium">
-              You dont have permission to view this page.
-            </p>
-          </CardContent>
-        </Card>
+      <div className="min-h-screen bg-gradient-to-br from-purple-900 via-blue-900 to-purple-900 p-6">
+        <div className="max-w-4xl mx-auto">
+          <Card className="bg-gradient-to-br from-gray-800 to-gray-900 border-gray-700">
+            <CardContent className="p-6">
+              <p className="text-red-400 font-medium">
+                You dont have permission to view this page.
+              </p>
+            </CardContent>
+          </Card>
+        </div>
       </div>
     )
   }
 
   return (
-    <div className="max-w-7xl mx-auto space-y-6">
-      <div className="flex justify-between items-center">
-        <div>
-          <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-600 via-purple-600 to-blue-600 bg-clip-text text-transparent">
-            HR Departments
-          </h1>
-          <p className="text-gray-600 mt-2">Manage HR department information</p>
-        </div>
+    <div className="min-h-screen bg-gradient-to-br from-purple-900 via-blue-900 to-purple-900 p-6">
+      <div className="max-w-7xl mx-auto space-y-6">
+        <div className="flex justify-between items-center">
+          <div>
+            <h1 className="text-4xl font-bold text-cyan-400 mb-2">HR Departments</h1>
+            <p className="text-gray-300">Manage HR department information</p>
+          </div>
         {isAdmin && (
           <Button
             onClick={handleNew}
@@ -309,23 +310,23 @@ export default function DepartmentsPage() {
       </div>
 
       {error && !showForm && (
-        <div className="p-3 text-sm text-destructive bg-destructive/10 rounded-md border border-destructive/20">
+        <div className="p-3 text-sm text-red-400 bg-red-900/20 rounded-md border border-red-700">
           {error}
         </div>
       )}
 
       {/* Branch Filter */}
-      <Card>
+      <Card className="bg-gradient-to-br from-gray-800 to-gray-900 border-gray-700">
         <CardContent className="p-4">
           <div className="flex items-center gap-4">
-            <Label htmlFor="branchFilter" className="whitespace-nowrap">
+            <Label htmlFor="branchFilter" className="whitespace-nowrap text-gray-300">
               Filter by Branch:
             </Label>
             <select
               id="branchFilter"
               value={selectedBranchFilter}
               onChange={(e) => setSelectedBranchFilter(e.target.value)}
-              className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 max-w-xs"
+              className="flex h-10 w-full rounded-md border border-gray-600 bg-gray-700 text-white px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-800 disabled:cursor-not-allowed disabled:opacity-50 max-w-xs"
             >
               <option value="">All Branches</option>
               {branches.map((branch) => (
@@ -339,12 +340,12 @@ export default function DepartmentsPage() {
       </Card>
 
       {showForm && (
-        <Card>
+        <Card className="bg-gradient-to-br from-gray-800 to-gray-900 border-gray-700">
           <CardHeader>
-            <CardTitle>
+            <CardTitle className="text-white">
               {editingDepartment ? "Edit Department" : "Create Department"}
             </CardTitle>
-            <CardDescription>
+            <CardDescription className="text-gray-400">
               {editingDepartment
                 ? "Update the department information"
                 : "Enter the department information"}
@@ -353,15 +354,15 @@ export default function DepartmentsPage() {
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-4">
               {error && (
-                <div className="p-3 text-sm text-destructive bg-destructive/10 rounded-md border border-destructive/20">
+                <div className="p-3 text-sm text-red-400 bg-red-900/20 rounded-md border border-red-700">
                   {error}
                 </div>
               )}
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label htmlFor="branchId">
-                    Branch <span className="text-destructive">*</span>
+                  <Label htmlFor="branchId" className="text-gray-300">
+                    Branch <span className="text-red-400">*</span>
                   </Label>
                   <select
                     id="branchId"
@@ -370,7 +371,7 @@ export default function DepartmentsPage() {
                     onChange={handleInputChange}
                     required
                     disabled={!!editingDepartment}
-                    className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                    className="flex h-10 w-full rounded-md border border-gray-600 bg-gray-700 text-white px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-800 disabled:cursor-not-allowed disabled:opacity-50"
                   >
                     <option value="">Select a branch</option>
                     {branches.map((branch) => (
@@ -380,12 +381,12 @@ export default function DepartmentsPage() {
                     ))}
                   </select>
                   {formErrors.branchId && (
-                    <p className="text-sm text-destructive">{formErrors.branchId}</p>
+                    <p className="text-sm text-red-400">{formErrors.branchId}</p>
                   )}
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="managerId">Manager ID</Label>
+                  <Label htmlFor="managerId" className="text-gray-300">Manager ID</Label>
                   <Input
                     id="managerId"
                     name="managerId"
@@ -393,15 +394,16 @@ export default function DepartmentsPage() {
                     value={formData.managerId}
                     onChange={handleInputChange}
                     placeholder="5"
+                    className="bg-gray-700 border-gray-600 text-white placeholder:text-gray-400 focus:border-cyan-400"
                   />
                   {formErrors.managerId && (
-                    <p className="text-sm text-destructive">{formErrors.managerId}</p>
+                    <p className="text-sm text-red-400">{formErrors.managerId}</p>
                   )}
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="nameEn">
-                    Name (English) <span className="text-destructive">*</span>
+                  <Label htmlFor="nameEn" className="text-gray-300">
+                    Name (English) <span className="text-red-400">*</span>
                   </Label>
                   <Input
                     id="nameEn"
@@ -410,15 +412,16 @@ export default function DepartmentsPage() {
                     onChange={handleInputChange}
                     required
                     placeholder="Training"
+                    className="bg-gray-700 border-gray-600 text-white placeholder:text-gray-400 focus:border-cyan-400"
                   />
                   {formErrors.nameEn && (
-                    <p className="text-sm text-destructive">{formErrors.nameEn}</p>
+                    <p className="text-sm text-red-400">{formErrors.nameEn}</p>
                   )}
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="nameAr">
-                    Name (Arabic) <span className="text-destructive">*</span>
+                  <Label htmlFor="nameAr" className="text-gray-300">
+                    Name (Arabic) <span className="text-red-400">*</span>
                   </Label>
                   <Input
                     id="nameAr"
@@ -428,25 +431,27 @@ export default function DepartmentsPage() {
                     required
                     placeholder="التدريب"
                     dir="rtl"
+                    className="bg-gray-700 border-gray-600 text-white placeholder:text-gray-400 focus:border-cyan-400"
                   />
                   {formErrors.nameAr && (
-                    <p className="text-sm text-destructive">{formErrors.nameAr}</p>
+                    <p className="text-sm text-red-400">{formErrors.nameAr}</p>
                   )}
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="location">Location</Label>
+                  <Label htmlFor="location" className="text-gray-300">Location</Label>
                   <Input
                     id="location"
                     name="location"
                     value={formData.location}
                     onChange={handleInputChange}
                     placeholder="Main Office"
+                    className="bg-gray-700 border-gray-600 text-white placeholder:text-gray-400 focus:border-cyan-400"
                   />
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="createdBy">Created By (User ID)</Label>
+                  <Label htmlFor="createdBy" className="text-gray-300">Created By (User ID)</Label>
                   <Input
                     id="createdBy"
                     name="createdBy"
@@ -455,11 +460,12 @@ export default function DepartmentsPage() {
                     onChange={handleInputChange}
                     placeholder={userId || "1"}
                     disabled={!!userId}
+                    className="bg-gray-700 border-gray-600 text-white placeholder:text-gray-400 focus:border-cyan-400"
                   />
                 </div>
 
                 <div className="space-y-2 md:col-span-2">
-                  <Label htmlFor="description">Description</Label>
+                  <Label htmlFor="description" className="text-gray-300">Description</Label>
                   <textarea
                     id="description"
                     name="description"
@@ -467,7 +473,7 @@ export default function DepartmentsPage() {
                     onChange={handleInputChange}
                     placeholder="Handles employee training"
                     rows={3}
-                    className="flex min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                    className="flex min-h-[80px] w-full rounded-md border border-gray-600 bg-gray-700 text-white px-3 py-2 text-sm placeholder:text-gray-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-800 disabled:cursor-not-allowed disabled:opacity-50"
                   />
                 </div>
               </div>
@@ -482,6 +488,7 @@ export default function DepartmentsPage() {
                     setFormErrors({})
                     setError("")
                   }}
+                  className="border-gray-600 text-gray-300 hover:bg-gray-700"
                 >
                   Cancel
                 </Button>
@@ -497,10 +504,10 @@ export default function DepartmentsPage() {
         </Card>
       )}
 
-      <Card>
+      <Card className="bg-gradient-to-br from-gray-800 to-gray-900 border-gray-700">
         <CardHeader>
-          <CardTitle>Departments List</CardTitle>
-          <CardDescription>
+          <CardTitle className="text-white">Departments List</CardTitle>
+          <CardDescription className="text-gray-400">
             {departments.length} department{departments.length !== 1 ? "s" : ""} found
             {selectedBranchFilter &&
               ` for ${getBranchName(parseInt(selectedBranchFilter))}`}
@@ -508,37 +515,37 @@ export default function DepartmentsPage() {
         </CardHeader>
         <CardContent>
           {loading ? (
-            <p className="text-center py-8 text-muted-foreground">Loading...</p>
+            <p className="text-center py-8 text-gray-400">Loading...</p>
           ) : departments.length === 0 ? (
-            <p className="text-center py-8 text-muted-foreground">
+            <p className="text-center py-8 text-gray-400">
               No departments found
             </p>
           ) : (
             <div className="overflow-x-auto">
               <table className="w-full border-collapse">
                 <thead>
-                  <tr className="border-b">
-                    <th className="text-left p-3 font-semibold">ID</th>
-                    <th className="text-left p-3 font-semibold">Name (EN)</th>
-                    <th className="text-left p-3 font-semibold">Name (AR)</th>
-                    <th className="text-left p-3 font-semibold">Branch</th>
-                    <th className="text-left p-3 font-semibold">Location</th>
-                    <th className="text-left p-3 font-semibold">Manager ID</th>
-                    {isAdmin && <th className="text-left p-3 font-semibold">Actions</th>}
+                  <tr className="border-b border-gray-700">
+                    <th className="text-left p-3 font-semibold text-gray-300">ID</th>
+                    <th className="text-left p-3 font-semibold text-gray-300">Name (EN)</th>
+                    <th className="text-left p-3 font-semibold text-gray-300">Name (AR)</th>
+                    <th className="text-left p-3 font-semibold text-gray-300">Branch</th>
+                    <th className="text-left p-3 font-semibold text-gray-300">Location</th>
+                    <th className="text-left p-3 font-semibold text-gray-300">Manager ID</th>
+                    {isAdmin && <th className="text-left p-3 font-semibold text-gray-300">Actions</th>}
                   </tr>
                 </thead>
                 <tbody>
                   {departments.map((dept) => (
                     <tr
                       key={dept.departmentId}
-                      className="border-b hover:bg-muted/50"
+                      className="border-b border-gray-700 hover:bg-gray-800/50 transition-colors"
                     >
-                      <td className="p-3">{dept.departmentId}</td>
-                      <td className="p-3 font-medium">{dept.nameEn}</td>
-                      <td className="p-3" dir="rtl">{dept.nameAr}</td>
-                      <td className="p-3">{getBranchName(dept.branchId)}</td>
-                      <td className="p-3">{dept.location || "-"}</td>
-                      <td className="p-3">{dept.managerId || "-"}</td>
+                      <td className="p-3 text-gray-300">{dept.departmentId}</td>
+                      <td className="p-3 font-medium text-white">{dept.nameEn}</td>
+                      <td className="p-3 text-gray-300" dir="rtl">{dept.nameAr}</td>
+                      <td className="p-3 text-gray-300">{getBranchName(dept.branchId)}</td>
+                      <td className="p-3 text-gray-300">{dept.location || "-"}</td>
+                      <td className="p-3 text-gray-300">{dept.managerId || "-"}</td>
                       {isAdmin && (
                         <td className="p-3">
                           <div className="flex gap-2">
@@ -546,6 +553,7 @@ export default function DepartmentsPage() {
                               variant="outline"
                               size="sm"
                               onClick={() => handleEdit(dept.departmentId)}
+                              className="border-gray-600 text-gray-300 hover:bg-gray-700"
                             >
                               Edit
                             </Button>
@@ -567,6 +575,7 @@ export default function DepartmentsPage() {
           )}
         </CardContent>
       </Card>
+      </div>
     </div>
   )
 }
