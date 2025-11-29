@@ -14,12 +14,14 @@ import {
   createEmployee,
   updateEmployee,
   deleteEmployee,
+  getAllHRDepartments,
 } from "@/lib/api"
 
 export default function EmployeesPage() {
   const router = useRouter()
   const [role, setRole] = useState("")
   const [employees, setEmployees] = useState([])
+  const [departments, setDepartments] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState("")
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -27,11 +29,13 @@ export default function EmployeesPage() {
   const [isFormOpen, setIsFormOpen] = useState(false)
 
   const [formData, setFormData] = useState({
-    firstName: "",
-    lastName: "",
+    name: "",
     email: "",
-    phoneNumber: "",
-    position: "",
+    phone: "",
+    hireDate: "",
+    jobId: "",
+    departmentId: "",
+    employmentStatus: "",
   })
 
   useEffect(() => {
@@ -50,21 +54,38 @@ export default function EmployeesPage() {
         return
       }
 
-      fetchEmployees()
+      fetchData()
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [router])
 
-  const fetchEmployees = async () => {
+  const fetchData = async () => {
     try {
       setLoading(true)
       setError("")
-      const { data } = await getAllEmployees()
-      setEmployees(Array.isArray(data) ? data : [])
-      console.log(data)
+      
+      // Fetch employees and departments in parallel
+      const [employeesRes, departmentsRes] = await Promise.allSettled([
+        getAllEmployees(),
+        getAllHRDepartments(),
+      ])
+
+      if (employeesRes.status === "fulfilled") {
+        setEmployees(Array.isArray(employeesRes.value.data) ? employeesRes.value.data : [])
+      } else {
+        console.error("Failed to fetch employees:", employeesRes.reason)
+        setError("Failed to load employees. Please try again.")
+      }
+
+      if (departmentsRes.status === "fulfilled") {
+        setDepartments(Array.isArray(departmentsRes.value.data) ? departmentsRes.value.data : [])
+      } else {
+        console.warn("Failed to fetch departments:", departmentsRes.reason)
+        setDepartments([])
+      }
     } catch (err) {
-      console.error("Failed to fetch employees:", err)
-      setError("Failed to load employees. Please try again.")
+      console.error("Failed to fetch data:", err)
+      setError("Failed to load data. Please try again.")
     } finally {
       setLoading(false)
     }
@@ -72,11 +93,13 @@ export default function EmployeesPage() {
 
   const resetForm = () => {
     setFormData({
-      firstName: "",
-      lastName: "",
+      name: "",
       email: "",
-      phoneNumber: "",
-      position: "",
+      phone: "",
+      hireDate: "",
+      jobId: "",
+      departmentId: "",
+      employmentStatus: "",
     })
     setSelectedEmployee(null)
   }
@@ -92,21 +115,57 @@ export default function EmployeesPage() {
     setError("")
 
     try {
+      // Prepare data according to API schema
+      const employeeData = {
+        name: formData.name.trim(),
+        email: formData.email.trim(),
+        phone: formData.phone?.trim() || "",
+        hireDate: formData.hireDate ? new Date(formData.hireDate).toISOString() : null,
+        jobId: formData.jobId ? parseInt(formData.jobId) : 0,
+        departmentId: formData.departmentId ? parseInt(formData.departmentId) : 0,
+        employmentStatus: formData.employmentStatus || "",
+      }
+
       if (selectedEmployee) {
         await updateEmployee(selectedEmployee.id || selectedEmployee.employeeId, {
           ...selectedEmployee,
-          ...formData,
+          ...employeeData,
         })
       } else {
-        await createEmployee(formData)
+        await createEmployee(employeeData)
       }
 
       resetForm()
       setIsFormOpen(false)
-      await fetchEmployees()
+      await fetchData()
     } catch (err) {
       console.error("Failed to save employee:", err)
-      setError("Failed to save employee. Please check the data and try again.")
+      console.error("Error response:", err.response?.data)
+      
+      let errorMessage = "Failed to save employee. Please check the data and try again."
+      
+      if (err.response?.data) {
+        const errorData = err.response.data
+        
+        if (errorData.message) {
+          errorMessage = errorData.message
+        } else if (errorData.error) {
+          errorMessage = errorData.error
+        } else if (errorData.title) {
+          errorMessage = errorData.title
+        } else if (typeof errorData === 'string') {
+          errorMessage = errorData
+        } else if (errorData.errors) {
+          const validationErrors = Object.entries(errorData.errors)
+            .map(([field, messages]) => `${field}: ${Array.isArray(messages) ? messages.join(', ') : messages}`)
+            .join('; ')
+          errorMessage = validationErrors || errorMessage
+        }
+      } else if (err.message) {
+        errorMessage = err.message
+      }
+      
+      setError(errorMessage)
     } finally {
       setIsSubmitting(false)
     }
@@ -115,12 +174,23 @@ export default function EmployeesPage() {
   const handleEdit = (employee) => {
     setSelectedEmployee(employee)
     setIsFormOpen(true)
+    
+    // Format date for input field (YYYY-MM-DD)
+    const formatDateForInput = (dateString) => {
+      if (!dateString) return ""
+      const date = new Date(dateString)
+      if (isNaN(date.getTime())) return ""
+      return date.toISOString().split('T')[0]
+    }
+    
     setFormData({
-      firstName: employee.firstName || "",
-      lastName: employee.lastName || "",
+      name: employee.name || `${employee.firstName || ""} ${employee.lastName || ""}`.trim() || "",
       email: employee.email || "",
-      phoneNumber: employee.phoneNumber || "",
-      position: employee.position || "",
+      phone: employee.phone || employee.phoneNumber || "",
+      hireDate: formatDateForInput(employee.hireDate),
+      jobId: employee.jobId?.toString() || "",
+      departmentId: employee.departmentId?.toString() || "",
+      employmentStatus: employee.employmentStatus || "",
     })
   }
 
@@ -129,7 +199,7 @@ export default function EmployeesPage() {
 
     try {
       await deleteEmployee(employeeId)
-      await fetchEmployees()
+      await fetchData()
     } catch (err) {
       console.error("Failed to delete employee:", err)
       setError("Failed to delete employee. Please try again.")
@@ -269,64 +339,113 @@ export default function EmployeesPage() {
             </CardHeader>
             <CardContent>
               <form onSubmit={handleSubmit} className="space-y-4">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="space-y-1">
-                    <Label htmlFor="firstName" className="text-gray-300">First Name</Label>
-                    <Input
-                      id="firstName"
-                      name="firstName"
-                      value={formData.firstName}
-                      onChange={handleChange}
-                      required
-                      className="bg-gray-700 border-gray-600 text-white placeholder:text-gray-400 focus:border-cyan-400"
-                    />
-                  </div>
-                  <div className="space-y-1">
-                    <Label htmlFor="lastName" className="text-gray-300">Last Name</Label>
-                    <Input
-                      id="lastName"
-                      name="lastName"
-                      value={formData.lastName}
-                      onChange={handleChange}
-                      required
-                      className="bg-gray-700 border-gray-600 text-white placeholder:text-gray-400 focus:border-cyan-400"
-                    />
-                  </div>
-                </div>
-
                 <div className="space-y-1">
-                  <Label htmlFor="email" className="text-gray-300">Email</Label>
+                  <Label htmlFor="name" className="text-gray-300">Name <span className="text-red-400">*</span></Label>
                   <Input
-                    id="email"
-                    type="email"
-                    name="email"
-                    value={formData.email}
+                    id="name"
+                    name="name"
+                    value={formData.name}
                     onChange={handleChange}
                     required
                     className="bg-gray-700 border-gray-600 text-white placeholder:text-gray-400 focus:border-cyan-400"
+                    placeholder="Enter full name"
                   />
                 </div>
 
-                <div className="space-y-1">
-                  <Label htmlFor="phoneNumber" className="text-gray-300">Phone Number</Label>
-                  <Input
-                    id="phoneNumber"
-                    name="phoneNumber"
-                    value={formData.phoneNumber}
-                    onChange={handleChange}
-                    className="bg-gray-700 border-gray-600 text-white placeholder:text-gray-400 focus:border-cyan-400"
-                  />
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-1">
+                    <Label htmlFor="email" className="text-gray-300">Email <span className="text-red-400">*</span></Label>
+                    <Input
+                      id="email"
+                      type="email"
+                      name="email"
+                      value={formData.email}
+                      onChange={handleChange}
+                      required
+                      className="bg-gray-700 border-gray-600 text-white placeholder:text-gray-400 focus:border-cyan-400"
+                      placeholder="user@example.com"
+                    />
+                  </div>
+
+                  <div className="space-y-1">
+                    <Label htmlFor="phone" className="text-gray-300">Phone</Label>
+                    <Input
+                      id="phone"
+                      name="phone"
+                      value={formData.phone}
+                      onChange={handleChange}
+                      className="bg-gray-700 border-gray-600 text-white placeholder:text-gray-400 focus:border-cyan-400"
+                      placeholder="Enter phone number"
+                    />
+                  </div>
                 </div>
 
                 <div className="space-y-1">
-                  <Label htmlFor="position" className="text-gray-300">Position</Label>
+                  <Label htmlFor="hireDate" className="text-gray-300">Hire Date</Label>
                   <Input
-                    id="position"
-                    name="position"
-                    value={formData.position}
+                    id="hireDate"
+                    name="hireDate"
+                    type="date"
+                    value={formData.hireDate}
                     onChange={handleChange}
-                    className="bg-gray-700 border-gray-600 text-white placeholder:text-gray-400 focus:border-cyan-400"
+                    className="bg-gray-700 border-gray-600 text-white focus:border-cyan-400"
                   />
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-1">
+                    <Label htmlFor="jobId" className="text-gray-300">Job ID</Label>
+                    <Input
+                      id="jobId"
+                      name="jobId"
+                      type="number"
+                      value={formData.jobId}
+                      onChange={handleChange}
+                      min="0"
+                      className="bg-gray-700 border-gray-600 text-white placeholder:text-gray-400 focus:border-cyan-400"
+                      placeholder="Enter job ID"
+                    />
+                  </div>
+
+                  <div className="space-y-1">
+                    <Label htmlFor="departmentId" className="text-gray-300">Department</Label>
+                    <select
+                      id="departmentId"
+                      name="departmentId"
+                      value={formData.departmentId}
+                      onChange={handleChange}
+                      className="w-full px-3 py-2 border border-gray-600 bg-gray-700 text-white rounded-md focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:border-transparent"
+                    >
+                      <option value="">Select a department</option>
+                      {departments.map((dept) => {
+                        const deptId = dept.id || dept.departmentId
+                        const deptName = dept.nameEn || dept.name || `Department #${deptId}`
+                        return (
+                          <option key={deptId} value={deptId}>
+                            {deptName}
+                          </option>
+                        )
+                      })}
+                    </select>
+                  </div>
+                </div>
+
+                <div className="space-y-1">
+                  <Label htmlFor="employmentStatus" className="text-gray-300">Employment Status</Label>
+                  <select
+                    id="employmentStatus"
+                    name="employmentStatus"
+                    value={formData.employmentStatus}
+                    onChange={handleChange}
+                    className="w-full px-3 py-2 border border-gray-600 bg-gray-700 text-white rounded-md focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:border-transparent"
+                  >
+                    <option value="">Select status</option>
+                    <option value="Active">Active</option>
+                    <option value="Inactive">Inactive</option>
+                    <option value="On Leave">On Leave</option>
+                    <option value="Terminated">Terminated</option>
+                    <option value="Resigned">Resigned</option>
+                  </select>
                 </div>
 
                 <div className="flex justify-end gap-2 pt-2">

@@ -181,3 +181,143 @@ export const deleteEmployee = (id) => {
   return api.delete(`/Employee/${id}`);
 };
 
+/* ======================
+        PROJECT
+====================== */
+
+// Get all projects
+// Authorization: Admin, HR, Employee (Employee Read Access)
+export const getAllProjects = () => {
+  return api.get("/Project");
+};
+
+// Get project by ID
+// Authorization: Admin, HR, Employee
+export const getProjectById = (id) => {
+  return api.get(`/Project/${id}`);
+};
+
+// Create project
+// Authorization: Admin
+export const createProject = (data) => {
+  return api.post("/Project", data);
+};
+
+// Update project
+// Authorization: Admin
+export const updateProject = (id, data) => {
+  return api.put(`/Project/${id}`, data);
+};
+
+// Delete project
+// Authorization: Admin
+export const deleteProject = (id) => {
+  return api.delete(`/Project/${id}`);
+};
+
+/* ======================
+    BENEFIT TYPE
+====================== */
+
+// Get all benefit types
+export const getAllBenefitTypes = () => {
+  return api.get("/BenefitType");
+};
+
+// Get benefit type by ID
+export const getBenefitTypeById = (id) => {
+  return api.get(`/BenefitType/${id}`);
+};
+
+// Create benefit type
+export const createBenefitType = (data) => {
+  return api.post("/BenefitType", data);
+};
+
+// Update benefit type
+export const updateBenefitType = (id, data) => {
+  return api.put(`/BenefitType/${id}`, data);
+};
+
+// Delete benefit type
+export const deleteBenefitType = (id) => {
+  return api.delete(`/BenefitType/${id}`);
+};
+
+/* ======================
+    BENEFITS COMPENSATION
+====================== */
+
+// Get all benefits compensations
+export const getAllBenefitsCompensations = () => {
+  return api.get("/BenefitsCompensation");
+};
+
+// Get benefits compensation by ID
+export const getBenefitsCompensationById = (id) => {
+  return api.get(`/BenefitsCompensation/${id}`);
+};
+
+// Create benefits compensation
+export const createBenefitsCompensation = (data) => {
+  return api.post("/BenefitsCompensation", data);
+};
+
+// Update benefits compensation
+export const updateBenefitsCompensation = (id, data) => {
+  return api.put(`/BenefitsCompensation/${id}`, data);
+};
+
+// Delete benefits compensation
+export const deleteBenefitsCompensation = (id) => {
+  return api.delete(`/BenefitsCompensation/${id}`);
+};
+
+/* ======================
+        TRAINING
+====================== */
+
+// Get all training courses
+// Authorization: Admin, HR
+export const getAllTrainings = () => {
+  return api.get("/Training");
+};
+
+// Get training by ID
+// Authorization: Admin, HR
+export const getTrainingById = (id) => {
+  return api.get(`/Training/${id}`);
+};
+
+// Create training course
+// Authorization: Admin
+export const createTraining = (data) => {
+  return api.post("/Training", data);
+};
+
+// Update training course
+// Authorization: Admin
+export const updateTraining = (id, data) => {
+  return api.put(`/Training/${id}`, data);
+};
+
+// Delete training course
+// Authorization: Admin
+export const deleteTraining = (id) => {
+  return api.delete(`/Training/${id}`);
+};
+
+/* ======================
+        JOB
+====================== */
+
+// Get all jobs
+export const getAllJobs = () => {
+  return api.get("/Job");
+};
+
+// Get job by ID
+export const getJobById = (id) => {
+  return api.get(`/Job/${id}`);
+};
+

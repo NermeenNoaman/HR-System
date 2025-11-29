@@ -65,33 +65,49 @@ export default function BenefitsCompensationPage() {
       setLoading(true)
       setError("")
       
-      // Fetch all data in parallel
-      const [compensationsRes, employeesRes, benefitTypesRes] = await Promise.all([
+      // Fetch all data in parallel with individual error handling
+      const [compensationsRes, employeesRes, benefitTypesRes] = await Promise.allSettled([
         getAllBenefitsCompensations(),
-        getAllEmployees().catch(() => ({ data: [] })), // Fallback if fails
-        getAllBenefitTypes().catch(() => ({ data: [] })), // Fallback if fails
+        getAllEmployees(),
+        getAllBenefitTypes(),
       ])
 
-      setBenefitsCompensations(Array.isArray(compensationsRes.data) ? compensationsRes.data : [])
-      setEmployees(Array.isArray(employeesRes.data) ? employeesRes.data : [])
-      setBenefitTypes(Array.isArray(benefitTypesRes.data) ? benefitTypesRes.data : [])
-    } catch (err) {
-      console.error("Failed to fetch data:", err)
-      const errorMessage = 
-        err.response?.data?.message ||
-        err.response?.data?.error ||
-        err.message ||
-        "Failed to load benefits compensation data. Please try again."
-      
-      if (err.response?.status === 500) {
-        setError("Server error: The backend encountered an issue. Please check the server logs or contact support.")
-      } else if (err.response?.status === 401) {
-        setError("Unauthorized: Please log in again.")
-      } else if (err.response?.status === 403) {
-        setError("Forbidden: You don't have permission to view benefits compensation.")
+      // Handle compensations result
+      if (compensationsRes.status === "fulfilled") {
+        setBenefitsCompensations(Array.isArray(compensationsRes.value.data) ? compensationsRes.value.data : [])
       } else {
-        setError(errorMessage)
+        console.error("Failed to fetch compensations:", compensationsRes.reason)
+        setBenefitsCompensations([])
+        const error = compensationsRes.reason
+        if (error.response?.status === 500) {
+          setError("Server error: Unable to load compensation records. The backend encountered an issue. Please check the server logs or contact support.")
+        } else if (error.response?.status === 401) {
+          setError("Unauthorized: Please log in again.")
+        } else if (error.response?.status === 403) {
+          setError("Forbidden: You don't have permission to view benefits compensation.")
+        } else {
+          setError(error.response?.data?.message || error.message || "Failed to load compensation records.")
+        }
       }
+
+      // Handle employees result
+      if (employeesRes.status === "fulfilled") {
+        setEmployees(Array.isArray(employeesRes.value.data) ? employeesRes.value.data : [])
+      } else {
+        console.warn("Failed to fetch employees:", employeesRes.reason)
+        setEmployees([])
+      }
+
+      // Handle benefit types result
+      if (benefitTypesRes.status === "fulfilled") {
+        setBenefitTypes(Array.isArray(benefitTypesRes.value.data) ? benefitTypesRes.value.data : [])
+      } else {
+        console.warn("Failed to fetch benefit types:", benefitTypesRes.reason)
+        setBenefitTypes([])
+      }
+    } catch (err) {
+      console.error("Unexpected error in fetchData:", err)
+      setError("An unexpected error occurred. Please try again.")
     } finally {
       setLoading(false)
     }
@@ -282,7 +298,7 @@ export default function BenefitsCompensationPage() {
                 {canManage && (
                   <Button
                     variant="outline"
-                    className="mt-4 border-gray-600 text-gray-300 hover:bg-gray-700"
+                    className="mt-4 border-gray-600 bg-gray-800 text-gray-300 hover:bg-gray-700 hover:text-white"
                     onClick={() => {
                       resetForm()
                       setIsFormOpen(true)
@@ -310,9 +326,9 @@ export default function BenefitsCompensationPage() {
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-gray-700">
-                    {benefitsCompensations.map((comp) => (
+                    {benefitsCompensations.map((comp, index) => (
                       <tr
-                        key={comp.id || comp.benefitsCompensationId}
+                        key={comp.id || comp.benefitsCompensationId || `compensation-${index}`}
                         className="hover:bg-gray-800/50 transition-colors duration-150"
                       >
                         <td className="py-4 px-6">
@@ -367,7 +383,7 @@ export default function BenefitsCompensationPage() {
                                 type="button"
                                 variant="outline"
                                 size="sm"
-                                className="h-7 px-3 text-xs border-gray-600 text-gray-300 hover:bg-gray-700"
+                                className="h-7 px-3 text-xs border-gray-600 bg-gray-800 text-gray-300 hover:bg-gray-700 hover:text-white"
                                 onClick={() => handleEdit(comp)}
                               >
                                 <FiEdit2 className="w-3.5 h-3.5 mr-1.5" />
@@ -377,7 +393,7 @@ export default function BenefitsCompensationPage() {
                                 type="button"
                                 variant="destructive"
                                 size="sm"
-                                className="h-7 px-3 text-xs"
+                                className="h-7 px-3 text-xs bg-red-600 hover:bg-red-700 text-white"
                                 onClick={() => handleDelete(comp.id || comp.benefitsCompensationId)}
                               >
                                 <FiTrash2 className="w-3.5 h-3.5 mr-1.5" />
@@ -533,11 +549,11 @@ export default function BenefitsCompensationPage() {
                       setIsFormOpen(false)
                     }}
                     disabled={isSubmitting}
-                    className="border-gray-600 text-gray-300 hover:bg-gray-700"
+                    className="border-gray-600 bg-gray-800 text-gray-300 hover:bg-gray-700 hover:text-white"
                   >
                     Cancel
                   </Button>
-                  <Button type="submit" disabled={isSubmitting} className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700">
+                  <Button type="submit" disabled={isSubmitting} className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white">
                     {isSubmitting
                       ? "Saving..."
                       : selectedCompensation

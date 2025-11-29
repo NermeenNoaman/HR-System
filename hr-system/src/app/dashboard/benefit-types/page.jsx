@@ -238,7 +238,7 @@ export default function BenefitTypesPage() {
               {canManage && (
                 <Button
                   variant="outline"
-                  className="mt-4 border-gray-600 text-gray-300 hover:bg-gray-700"
+                  className="mt-4 border-gray-600 bg-gray-800 text-gray-300 hover:bg-gray-700 hover:text-white"
                   onClick={() => {
                     resetForm()
                     setIsFormOpen(true)
@@ -264,9 +264,9 @@ export default function BenefitTypesPage() {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-700">
-                  {benefitTypes.map((bt) => (
+                  {benefitTypes.map((bt, index) => (
                     <tr
-                      key={bt.id || bt.benefitTypeId}
+                      key={bt.id || bt.benefitTypeId || `benefit-type-${index}`}
                       className="hover:bg-gray-800/50 transition-colors duration-150"
                     >
                       <td className="py-4 px-6">
@@ -308,7 +308,7 @@ export default function BenefitTypesPage() {
                               type="button"
                               variant="outline"
                               size="sm"
-                              className="h-7 px-3 text-xs border-gray-600 text-gray-300 hover:bg-gray-700"
+                              className="h-7 px-3 text-xs border-gray-600 bg-gray-800 text-gray-300 hover:bg-gray-700 hover:text-white"
                               onClick={() => handleEdit(bt)}
                             >
                               <FiEdit2 className="w-3.5 h-3.5 mr-1.5" />
@@ -318,7 +318,7 @@ export default function BenefitTypesPage() {
                               type="button"
                               variant="destructive"
                               size="sm"
-                              className="h-7 px-3 text-xs"
+                              className="h-7 px-3 text-xs bg-red-600 hover:bg-red-700 text-white"
                               onClick={() => handleDelete(bt.id || bt.benefitTypeId)}
                             >
                               <FiTrash2 className="w-3.5 h-3.5 mr-1.5" />
@@ -423,11 +423,11 @@ export default function BenefitTypesPage() {
                     setIsFormOpen(false)
                   }}
                   disabled={isSubmitting}
-                  className="border-gray-600 text-gray-300 hover:bg-gray-700"
+                  className="border-gray-600 bg-gray-800 text-gray-300 hover:bg-gray-700 hover:text-white"
                 >
                   Cancel
                 </Button>
-                <Button type="submit" disabled={isSubmitting} className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700">
+                <Button type="submit" disabled={isSubmitting} className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white">
                   {isSubmitting
                     ? "Saving..."
                     : selectedBenefitType

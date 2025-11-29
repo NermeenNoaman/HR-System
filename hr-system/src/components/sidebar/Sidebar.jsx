@@ -10,8 +10,12 @@ import {
   FiUsers,
   FiUser,
   FiFolder,
+  FiLayers,
+  FiBook,
   FiCalendar,
   FiDollarSign,
+  FiGift,
+  FiPackage,
   FiLogOut,
   FiMenu,
   FiX,
@@ -36,6 +40,7 @@ export default function Sidebar() {
 
   const isAdmin = role === "admin"
   const isHR = role === "HR"
+  const isEmployee = role === "Employee"
 
   const menuItems = [
     {
@@ -66,6 +71,30 @@ export default function Sidebar() {
       title: "Departments",
       href: "/dashboard/departments",
       icon: FiFolder,
+      available: isAdmin || isHR,
+    },
+    {
+      title: "Projects",
+      href: "/dashboard/projects",
+      icon: FiLayers,
+      available: isAdmin || isHR || isEmployee,
+    },
+    {
+      title: "Training",
+      href: "/dashboard/trainings",
+      icon: FiBook,
+      available: isAdmin || isHR,
+    },
+    {
+      title: "Benefit Types",
+      href: "/dashboard/benefit-types",
+      icon: FiPackage,
+      available: isAdmin || isHR,
+    },
+    {
+      title: "Benefits & Compensation",
+      href: "/dashboard/benefits-compensation",
+      icon: FiGift,
       available: isAdmin || isHR,
     },
     {
