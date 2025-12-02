@@ -14,9 +14,6 @@ namespace HRSystem.BaseLibrary.DTOs
         public DateTime StartDate { get; set; }
         public DateTime? EndDate { get; set; }
         public decimal? Value { get; set; }
-        public DateTime CreatedDate { get; set; }
-        public DateTime? UpdatedDate { get; set; }
-        public bool isDeleted { get; set; }
     }
 
     // Create DTO (INPUT)
@@ -34,10 +31,6 @@ namespace HRSystem.BaseLibrary.DTOs
         public DateTime? EndDate { get; set; }
 
         public decimal? Value { get; set; }
-
-        public DateTime CreatedDate { get; set; }    // often set by backend
-        public DateTime? UpdatedDate { get; set; }
-        public bool isDeleted { get; set; }
     }
 
     // Update DTO (INPUT)
@@ -56,13 +49,7 @@ namespace HRSystem.BaseLibrary.DTOs
         public DateTime StartDate { get; set; }
 
         public DateTime? EndDate { get; set; }
+
         public decimal? Value { get; set; }
-        public DateTime CreatedDate { get; set; }    // often set by backend
-        public DateTime? UpdatedDate { get; set; }
-        public bool isDeleted { get; set; }
     }
 }
-
-
-
-
