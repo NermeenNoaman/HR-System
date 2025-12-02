@@ -8,25 +8,25 @@ namespace HRSystem_Wizer_.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class HRNeedRequestController : ControllerBase
+    public class InterviewController : ControllerBase
     {
-        private readonly IGenericRepository<TPLHRNeedRequest> _repository;
+        private readonly IGenericRepository<TPLInterview> _repository;
         private readonly IMapper _mapper;
 
-        public HRNeedRequestController(IGenericRepository<TPLHRNeedRequest> repository, IMapper mapper)
+        public InterviewController(IGenericRepository<TPLInterview> repository, IMapper mapper)
         {
             _repository = repository;
             _mapper = mapper;
         }
 
         [HttpGet]
-        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<HRNeedRequestReadDto>))]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<InterviewReadDto>))]
         public async Task<IActionResult> GetAll()
         {
             try
             {
                 var entities = await _repository.GetAllAsync();
-                var dtos = _mapper.Map<IEnumerable<HRNeedRequestReadDto>>(entities);
+                var dtos = _mapper.Map<IEnumerable<InterviewReadDto>>(entities);
                 return Ok(dtos);
             }
             catch (Exception ex)
@@ -36,7 +36,7 @@ namespace HRSystem_Wizer_.Controllers
         }
 
         [HttpGet("{id}")]
-        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(HRNeedRequestReadDto))]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(InterviewReadDto))]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> GetById(int id)
         {
@@ -45,10 +45,10 @@ namespace HRSystem_Wizer_.Controllers
                 var entity = await _repository.GetByIdAsync(id);
                 if (entity == null)
                 {
-                    return NotFound(new { Message = $"HR Need Request with ID {id} not found." });
+                    return NotFound(new { Message = $"Interview with ID {id} not found." });
                 }
 
-                var dto = _mapper.Map<HRNeedRequestReadDto>(entity);
+                var dto = _mapper.Map<InterviewReadDto>(entity);
                 return Ok(dto);
             }
             catch (Exception ex)
@@ -58,9 +58,9 @@ namespace HRSystem_Wizer_.Controllers
         }
 
         [HttpPost]
-        [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(HRNeedRequestReadDto))]
+        [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(InterviewReadDto))]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> Create([FromBody] HRNeedRequestCreateDto dto)
+        public async Task<IActionResult> Create([FromBody] InterviewCreateDto dto)
         {
             try
             {
@@ -69,12 +69,12 @@ namespace HRSystem_Wizer_.Controllers
                     return BadRequest(ModelState);
                 }
 
-                var entity = _mapper.Map<TPLHRNeedRequest>(dto);
+                var entity = _mapper.Map<TPLInterview>(dto);
                 var createdEntity = await _repository.AddAsync(entity);
                 await _repository.SaveChangesAsync();
 
-                var createdDto = _mapper.Map<HRNeedRequestReadDto>(createdEntity);
-                return CreatedAtAction(nameof(GetById), new { id = createdDto.HRNeedID }, createdDto);
+                var createdDto = _mapper.Map<InterviewReadDto>(createdEntity);
+                return CreatedAtAction(nameof(GetById), new { id = createdDto.InterviewID }, createdDto);
             }
             catch (Exception ex)
             {
@@ -86,11 +86,11 @@ namespace HRSystem_Wizer_.Controllers
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> Update(int id, [FromBody] HRNeedRequestUpdateDto dto)
+        public async Task<IActionResult> Update(int id, [FromBody] InterviewUpdateDto dto)
         {
             try
             {
-                if (id != dto.HRNeedID)
+                if (id != dto.InterviewID)
                 {
                     return BadRequest(new { Message = "ID mismatch between route and body." });
                 }
@@ -103,7 +103,7 @@ namespace HRSystem_Wizer_.Controllers
                 var existingEntity = await _repository.GetByIdAsync(id);
                 if (existingEntity == null)
                 {
-                    return NotFound(new { Message = $"HR Need Request with ID {id} not found." });
+                    return NotFound(new { Message = $"Interview with ID {id} not found." });
                 }
 
                 _mapper.Map(dto, existingEntity);
@@ -128,7 +128,7 @@ namespace HRSystem_Wizer_.Controllers
                 var entity = await _repository.GetByIdAsync(id);
                 if (entity == null)
                 {
-                    return NotFound(new { Message = $"HR Need Request with ID {id} not found." });
+                    return NotFound(new { Message = $"Interview with ID {id} not found." });
                 }
 
                 await _repository.DeleteAsync(entity);
