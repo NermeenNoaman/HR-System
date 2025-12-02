@@ -1,97 +1,196 @@
+using AutoMapper;
 using HRSystem.BaseLibrary.DTOs;
+using HRSystem.BaseLibrary.Models;
 using HRSystem.Infrastructure.Contracts;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 
-[Route("api/[controller]")]
-[ApiController]
-[Authorize]
-public class HRNeedRequestController : ControllerBase
+namespace HRSystem_Wizer_.Controllers
+{
+    [ApiController]
+    [Route("api/[controller]")]
+    public class HRDepartmentController : ControllerBase
     {
-        private readonly IHRNeedRequestService _service;
+        private readonly IHRDepartmentRepository _repository;
+        private readonly IBranchRepository _branchRepository;
+        private readonly IMapper _mapper;
+        private readonly ILogger<HRDepartmentController> _logger;
 
-        public HRNeedRequestController(IHRNeedRequestService service)
+        public HRDepartmentController(
+            IHRDepartmentRepository repository,
+            IBranchRepository branchRepository,
+            IMapper mapper,
+            ILogger<HRDepartmentController> logger)
         {
-            _service = service;
+            _repository = repository;
+            _branchRepository = branchRepository;
+            _mapper = mapper;
+            _logger = logger;
         }
 
+        // Get all HR departments
         [HttpGet]
-        [Authorize(Roles = "admin,HR")]
-        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<HRNeedRequestReadDto>))]
-        public async Task<IActionResult> GetAll()
+        [Authorize(Roles = "admin ,HR ")]
+        public async Task<ActionResult<IEnumerable<HRDepartmentReadDto>>> GetAll()
         {
-            var dtos = await _service.GetAllAsync();
-            return Ok(dtos);
+            try
+            {
+                var departments = await _repository.GetAllActiveAsync();
+                var departmentDtos = _mapper.Map<IEnumerable<HRDepartmentReadDto>>(departments);
+                return Ok(departmentDtos);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error retrieving HR departments");
+                return StatusCode(500, "An error occurred while retrieving HR departments");
+            }
         }
 
+        // Get HR department by ID
         [HttpGet("{id}")]
-        [Authorize(Roles = "admin,HR")]
-    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(HRNeedRequestReadDto))]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> GetById(int id)
+        [Authorize(Roles = "admin ,HR ")]
+        public async Task<ActionResult<HRDepartmentReadDto>> GetById(int id)
         {
-            var dto = await _service.GetByIdAsync(id);
-            if (dto == null)
+            try
             {
-                return NotFound(new { Message = $"HR Need Request with ID {id} not found." });
+                var department = await _repository.GetByIdAsync(id);
+                if (department == null || department.IsDeleted)
+                {
+                    return NotFound($"HR Department with ID {id} not found");
+                }
+
+                var departmentDto = _mapper.Map<HRDepartmentReadDto>(department);
+                return Ok(departmentDto);
             }
-            return Ok(dto);
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error retrieving HR department with ID {Id}", id);
+                return StatusCode(500, "An error occurred while retrieving the HR department");
+            }
         }
 
+        // Get HR departments by branch ID
+        [HttpGet("branch/{branchId}")]
+        [Authorize(Roles = "admin ,HR ")]
+        public async Task<ActionResult<IEnumerable<HRDepartmentReadDto>>> GetByBranchId(int branchId)
+        {
+            try
+            {
+                var departments = await _repository.GetByBranchIdAsync(branchId);
+                var departmentDtos = _mapper.Map<IEnumerable<HRDepartmentReadDto>>(departments);
+                return Ok(departmentDtos);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error retrieving HR departments for branch {BranchId}", branchId);
+                return StatusCode(500, "An error occurred while retrieving HR departments");
+            }
+        }
+
+        // Create a new HR department
         [HttpPost]
-        [Authorize(Roles = "admin,HR")]
-        [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(HRNeedRequestReadDto))]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> Create([FromBody] HRNeedRequestCreateDto dto)
+        [Authorize(Roles = "admin")]
+        public async Task<ActionResult<HRDepartmentReadDto>> Create([FromBody] HRDepartmentCreateDto createDto)
         {
-            if (!ModelState.IsValid)
+            try
             {
-                return BadRequest(ModelState);
-            }
+                if (!ModelState.IsValid)
+                {
+                    return BadRequest(ModelState);
+                }
 
-            var createdDto = await _service.CreateAsync(dto);
-            return CreatedAtAction(nameof(GetById), new { id = createdDto.HRNeedID }, createdDto);
+                // Check if branch exists
+                var branch = await _branchRepository.GetByIdAsync(createDto.BranchId);
+                if (branch == null || branch.IsDeleted)
+                {
+                    return NotFound($"Branch with ID {createDto.BranchId} not found");
+                }
+
+                var department = _mapper.Map<LkpHRDepartment>(createDto);
+                department.IsDeleted = false;
+
+                await _repository.AddAsync(department);
+                await _repository.SaveChangesAsync();
+
+                var departmentDto = _mapper.Map<HRDepartmentReadDto>(department);
+                return CreatedAtAction(nameof(GetById), new { id = department.DepartmentId }, departmentDto);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error creating HR department");
+                return StatusCode(500, "An error occurred while creating the HR department");
+            }
         }
 
+        // Update an existing HR department
         [HttpPut("{id}")]
-        [Authorize(Roles = "admin,HR")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> Update(int id, [FromBody] HRNeedRequestUpdateDto dto)
+        [Authorize(Roles = "admin")]
+        public async Task<ActionResult<HRDepartmentReadDto>> Update(int id, [FromBody] HRDepartmentUpdateDto updateDto)
         {
-            if (id != dto.HRNeedID)
+            try
             {
-                return BadRequest(new { Message = "ID mismatch between route and body." });
-            }
+                if (!ModelState.IsValid)
+                {
+                    return BadRequest(ModelState);
+                }
 
-            if (!ModelState.IsValid)
+                if (id != updateDto.DepartmentId)
+                {
+                    return BadRequest("ID mismatch");
+                }
+
+                var department = await _repository.GetByIdAsync(id);
+                if (department == null || department.IsDeleted)
+                {
+                    return NotFound($"HR Department with ID {id} not found");
+                }
+
+                // Check if branch exists
+                var branch = await _branchRepository.GetByIdAsync(updateDto.BranchId);
+                if (branch == null || branch.IsDeleted)
+                {
+                    return NotFound($"Branch with ID {updateDto.BranchId} not found");
+                }
+
+                _mapper.Map(updateDto, department);
+                await _repository.UpdateAsync(department);
+                await _repository.SaveChangesAsync();
+
+                var departmentDto = _mapper.Map<HRDepartmentReadDto>(department);
+                return Ok(departmentDto);
+            }
+            catch (Exception ex)
             {
-                return BadRequest(ModelState);
+                _logger.LogError(ex, "Error updating HR department with ID {Id}", id);
+                return StatusCode(500, "An error occurred while updating the HR department");
             }
-
-            var result = await _service.UpdateAsync(id, dto);
-            if (!result)
-            {
-                return NotFound(new { Message = $"HR Need Request with ID {id} not found for update." });
-            }
-
-            return Ok(new { Message = "HR Need Request updated successfully." });
         }
 
+        // Delete (soft delete) an HR department
         [HttpDelete("{id}")]
         [Authorize(Roles = "admin")]
-        [ProducesResponseType(StatusCodes.Status204NoContent)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> Delete(int id)
         {
-            var result = await _service.DeleteAsync(id);
-            if (!result)
+            try
             {
-                return NotFound(new { Message = $"HR Need Request with ID {id} not found." });
+                var department = await _repository.GetByIdAsync(id);
+                if (department == null || department.IsDeleted)
+                {
+                    return NotFound($"HR Department with ID {id} not found");
+                }
+
+                // Soft delete
+                department.IsDeleted = true;
+                await _repository.UpdateAsync(department);
+                await _repository.SaveChangesAsync();
+
+                return NoContent();
             }
-
-            return NoContent();
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error deleting HR department with ID {Id}", id);
+                return StatusCode(500, "An error occurred while deleting the HR department");
+            }
         }
+    }
 }
-
