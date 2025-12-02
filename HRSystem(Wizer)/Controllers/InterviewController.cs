@@ -1,97 +1,145 @@
+using AutoMapper;
 using HRSystem.BaseLibrary.DTOs;
+using HRSystem.BaseLibrary.Models;
 using HRSystem.Infrastructure.Contracts;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Authorization;
 
-[Route("api/[controller]")]
-[ApiController]
-[Authorize]
-public class InterviewController : ControllerBase
+namespace HRSystem_Wizer_.Controllers
+{
+    [Route("api/[controller]")]
+    [ApiController]
+    public class HRNeedRequestController : ControllerBase
     {
-    private readonly IInterviewService _service;
+        private readonly IGenericRepository<TPLHRNeedRequest> _repository;
+        private readonly IMapper _mapper;
 
-    public InterviewController(IInterviewService service)
-    {
-        _service = service;
-    }
-
-    [HttpGet]
-    [Authorize(Roles ="admin,HR")]
-    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<InterviewReadDto>))]
-    public async Task<IActionResult> GetAll()
-    {
-        var dtos = await _service.GetAllAsync();
-        return Ok(dtos);
-    }
-
-    [HttpGet("{id}")]
-    [Authorize(Roles ="admin,HR")]
-    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(InterviewReadDto))]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> GetById(int id)
-    {
-        var dto = await _service.GetByIdAsync(id);
-        if (dto == null)
+        public HRNeedRequestController(IGenericRepository<TPLHRNeedRequest> repository, IMapper mapper)
         {
-            return NotFound(new { Message = $"Interview with ID {id} not found." });
-        }
-        return Ok(dto);
-    }
-
-    [HttpPost]
-    [Authorize(Roles ="admin,HR")]
-    [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(InterviewReadDto))]
-    [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<IActionResult> Create([FromBody] InterviewCreateDto dto)
-    {
-        if (!ModelState.IsValid)
-        {
-            return BadRequest(ModelState);
+            _repository = repository;
+            _mapper = mapper;
         }
 
-        var createdDto = await _service.CreateAsync(dto);
-        return CreatedAtAction(nameof(GetById), new { id = createdDto.InterviewID }, createdDto);
-    }
-
-    [HttpPut("{id}")]
-    [Authorize(Roles = "admin,HR")]
-    [ProducesResponseType(StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
-    [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<IActionResult> Update(int id, [FromBody] InterviewUpdateDto dto)
-    {
-        if (id != dto.InterviewID)
+        [HttpGet]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<HRNeedRequestReadDto>))]
+        public async Task<IActionResult> GetAll()
         {
-            return BadRequest(new { Message = "ID mismatch between route and body." });
+            try
+            {
+                var entities = await _repository.GetAllAsync();
+                var dtos = _mapper.Map<IEnumerable<HRNeedRequestReadDto>>(entities);
+                return Ok(dtos);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"An error occurred: {ex.Message}");
+            }
         }
 
-        if (!ModelState.IsValid)
+        [HttpGet("{id}")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(HRNeedRequestReadDto))]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> GetById(int id)
         {
-            return BadRequest(ModelState);
+            try
+            {
+                var entity = await _repository.GetByIdAsync(id);
+                if (entity == null)
+                {
+                    return NotFound(new { Message = $"HR Need Request with ID {id} not found." });
+                }
+
+                var dto = _mapper.Map<HRNeedRequestReadDto>(entity);
+                return Ok(dto);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"An error occurred: {ex.Message}");
+            }
         }
 
-        var result = await _service.UpdateAsync(id, dto);
-        if (!result)
+        [HttpPost]
+        [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(HRNeedRequestReadDto))]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> Create([FromBody] HRNeedRequestCreateDto dto)
         {
-            return NotFound(new { Message = $"Interview with ID {id} not found for update." });
+            try
+            {
+                if (!ModelState.IsValid)
+                {
+                    return BadRequest(ModelState);
+                }
+
+                var entity = _mapper.Map<TPLHRNeedRequest>(dto);
+                var createdEntity = await _repository.AddAsync(entity);
+                await _repository.SaveChangesAsync();
+
+                var createdDto = _mapper.Map<HRNeedRequestReadDto>(createdEntity);
+                return CreatedAtAction(nameof(GetById), new { id = createdDto.HRNeedID }, createdDto);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"An error occurred: {ex.Message}");
+            }
         }
 
-        return Ok(new { Message = "Interview updated successfully." });
-    }
-
-    [HttpDelete("{id}")]
-    [Authorize(Roles = "admin")]
-    [ProducesResponseType(StatusCodes.Status204NoContent)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> Delete(int id)
-    {
-        var result = await _service.DeleteAsync(id);
-        if (!result)
+        [HttpPut("{id}")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> Update(int id, [FromBody] HRNeedRequestUpdateDto dto)
         {
-            return NotFound(new { Message = $"Interview with ID {id} not found." });
+            try
+            {
+                if (id != dto.HRNeedID)
+                {
+                    return BadRequest(new { Message = "ID mismatch between route and body." });
+                }
+
+                if (!ModelState.IsValid)
+                {
+                    return BadRequest(ModelState);
+                }
+
+                var existingEntity = await _repository.GetByIdAsync(id);
+                if (existingEntity == null)
+                {
+                    return NotFound(new { Message = $"HR Need Request with ID {id} not found." });
+                }
+
+                _mapper.Map(dto, existingEntity);
+                await _repository.UpdateAsync(existingEntity);
+                await _repository.SaveChangesAsync();
+
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"An error occurred: {ex.Message}");
+            }
         }
 
-        return NoContent();
+        [HttpDelete("{id}")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> Delete(int id)
+        {
+            try
+            {
+                var entity = await _repository.GetByIdAsync(id);
+                if (entity == null)
+                {
+                    return NotFound(new { Message = $"HR Need Request with ID {id} not found." });
+                }
+
+                await _repository.DeleteAsync(entity);
+                await _repository.SaveChangesAsync();
+
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"An error occurred: {ex.Message}");
+            }
+        }
     }
 }
-
