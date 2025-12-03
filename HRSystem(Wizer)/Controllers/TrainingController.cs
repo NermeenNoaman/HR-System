@@ -121,7 +121,7 @@ public class TrainingController : ControllerBase
     // DELETE: Delete Training Course (HR/Admin Only - Inherits Class-level Auth)
     // =========================================================================
     [HttpDelete("{id}")]
-    [Authorize(Roles = "HR,admin")]
+    [Authorize(Roles = "admin")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> DeleteTraining(int id)

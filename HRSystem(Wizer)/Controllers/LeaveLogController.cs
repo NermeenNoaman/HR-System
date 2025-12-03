@@ -43,7 +43,19 @@ public class LeaveLogController : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<LeaveLogReadDto>))]
     public async Task<IActionResult> GetEmployeeLeaveHistory(int employeeId)
     {
-       
+        var userRole = User.FindFirst(ClaimTypes.Role)?.Value;
+        var loggedInEmployeeIdClaim = User.FindFirst("EmployeeID")?.Value;
+
+        // نحتاج فقط لتنفيذ هذا الفحص إذا لم يكن المستخدم admin أو HR
+        if (userRole != "admin" && userRole != "HR")
+        {
+            // إذا كان المستخدم ليس مديراً، يجب أن يكون ID المطلوب هو IDه الخاص
+            if (loggedInEmployeeIdClaim == null || int.Parse(loggedInEmployeeIdClaim) != id)
+            {
+                // منع الوصول: الموظف العادي يحاول رؤية ملف زميله
+                return Forbid(); // 403 Forbidden
+            }
+        }
         var entities = await _leaveLogRepo.FindAsync(l => l.EmployeeID == employeeId);
 
         var dtos = _mapper.Map<IEnumerable<LeaveLogReadDto>>(entities);

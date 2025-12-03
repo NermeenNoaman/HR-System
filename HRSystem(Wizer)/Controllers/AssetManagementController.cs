@@ -60,7 +60,7 @@ public class AssetManagementController : ControllerBase
     // GET: Get All Assets Assigned to an Employee (READ FILTERED)
     // =========================================================================
     [HttpGet("employee/{employeeId}")]
-    [Authorize(Roles = "HR,admin,Employee")]
+    [Authorize(Roles = "HR,admin")]
     public async Task<IActionResult> GetEmployeeAssets(int employeeId)
     {
         // 1. Extracting the current user's identity (from the token)
@@ -88,15 +88,11 @@ public class AssetManagementController : ControllerBase
         return Ok(dtos);
     }
 
-    private IActionResult Forbid(object value)
-    {
-        throw new NotImplementedException();
-    }
+    
 
     // =========================================================================
     // GET: Get Assets for the CURRENT Employee (SELF-SERVICE)
     // =========================================================================
-    [Authorize]
     // Helper to get the current Employee ID from the JWT Token
     private int GetCurrentUserId()
     {

@@ -4,6 +4,7 @@ using HRSystem.BaseLibrary.Models;
 using HRSystem.Infrastructure.Contracts;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 [Route("api/[controller]")]
@@ -57,6 +58,19 @@ public class LeaveBalanceController : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<LeaveBalanceReadDto>))]
     public async Task<IActionResult> GetBalanceByEmployeeId(int employeeId)
     {
+        var userRole = User.FindFirst(ClaimTypes.Role)?.Value;
+        var loggedInEmployeeIdClaim = User.FindFirst("EmployeeID")?.Value;
+
+        // نحتاج فقط لتنفيذ هذا الفحص إذا لم يكن المستخدم admin أو HR
+        if (userRole != "admin" && userRole != "HR")
+        {
+            // إذا كان المستخدم ليس مديراً، يجب أن يكون ID المطلوب هو IDه الخاص
+            if (loggedInEmployeeIdClaim == null || int.Parse(loggedInEmployeeIdClaim) != employeeId)
+            {
+                // منع الوصول: الموظف العادي يحاول رؤية ملف زميله
+                return Forbid(); // 403 Forbidden
+            }
+        }
         // Assuming your GenericRepository has a method to get by filter
         // If not, you may need a custom method in ITPLLeaveBalanceRepository to fetch all balances for an employee
         var entities = await _balanceRepo.FindAsync(b => b.EmployeeId == employeeId);
