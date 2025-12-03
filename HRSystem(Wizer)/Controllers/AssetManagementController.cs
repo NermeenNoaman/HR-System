@@ -29,36 +29,31 @@ public class AssetManagementController : ControllerBase
     [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(TPLAssetManagementReadDTO))]
     [ProducesResponseType(StatusCodes.Status409Conflict)]
     [Authorize(Roles = "HR,admin")]
-    public async Task<IActionResult> CreateAssetAssignment([FromBody] TPLAssetManagementCreateDTO dto)
-    {
-        // Validation: Check for unique Serial Number
-        var existingAsset = await _assetRepo.GetBySerialNumberAsync(dto.SerialNumber);
-        if (existingAsset != null)
-        {
-            return Conflict(new { Message = $"Asset with Serial Number '{dto.SerialNumber}' already exists." });
-        }
-
-        var entity = _mapper.Map<TPLAssetManagement>(dto);
-
-        var createdEntity = await _assetRepo.AddAsync(entity);
-        await _assetRepo.SaveChangesAsync();
-
-        var createdDto = _mapper.Map<TPLAssetManagementReadDTO>(createdEntity);
-        return CreatedAtAction(nameof(GetAssetById), new { id = createdDto.AssetID }, createdDto);
-    }
-
     // =========================================================================
-    // GET: Get Asset by ID (READ SINGLE)
+    // GET: Get Asset by ID (READ SINGLE) - RETAINED FOR CREATEDATACTION
     // =========================================================================
     [HttpGet("{id}")]
     [Authorize(Roles = "HR,admin")]
-    public async Task<IActionResult> GetAssetById(int id)
+    public async Task<IActionResult> GetAssetById(int id) // يجب الاحتفاظ بهذه الدالة
     {
         var entity = await _assetRepo.GetByIdAsync(id);
         if (entity == null) return NotFound();
 
         var dto = _mapper.Map<TPLAssetManagementReadDTO>(entity);
         return Ok(dto);
+    }
+
+    // =========================================================================
+    // GET: Get All Assets (THE NEW GET ALL)
+    // =========================================================================
+    [HttpGet] 
+    [Authorize(Roles = "HR,admin")]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<TPLAssetManagementReadDTO>))]
+    public async Task<IActionResult> GetAllAssets()
+    {
+        var entities = await _assetRepo.GetAllAsync();
+        var dtos = _mapper.Map<IEnumerable<TPLAssetManagementReadDTO>>(entities);
+        return Ok(dtos);
     }
 
     // =========================================================================

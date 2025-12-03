@@ -40,6 +40,5 @@ public partial class LkpHRDepartment
     [InverseProperty("Department")]
     public virtual ICollection<TPLEmployee> TPLEmployees { get; set; } = new List<TPLEmployee>();
 
-    [InverseProperty("Department")]
-    public virtual ICollection<TPLHRNeedRequest> TPLHRNeedRequests { get; set; } = new List<TPLHRNeedRequest>();
+    
 }

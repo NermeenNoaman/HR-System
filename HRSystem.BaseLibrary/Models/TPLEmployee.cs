@@ -44,8 +44,7 @@ public partial class TPLEmployee
     [InverseProperty("TPLEmployees")]
     public virtual TPLJob Job { get; set; }
 
-    [InverseProperty("Employee")]
-    public virtual ICollection<LKPSalary> LKPSalaries { get; set; } = new List<LKPSalary>();
+   
 
     [InverseProperty("AssignedToNavigation")]
     public virtual ICollection<TPLAssetManagement> TPLAssetManagements { get; set; } = new List<TPLAssetManagement>();
@@ -53,16 +52,8 @@ public partial class TPLEmployee
     [InverseProperty("Employee")]
     public virtual ICollection<TPLAttendance> TPLAttendances { get; set; } = new List<TPLAttendance>();
 
-    [InverseProperty("Employee")]
-    public virtual ICollection<TPLBenefitsCompensation> TPLBenefitsCompensations { get; set; } = new List<TPLBenefitsCompensation>();
-
-    
-    [InverseProperty("Employee")]
-    public virtual ICollection<TPLDocumentManagement> TPLDocumentManagements { get; set; } = new List<TPLDocumentManagement>();
 
 
-    [InverseProperty("Interviewer")]
-    public virtual ICollection<TPLInterview> TPLInterviews { get; set; } = new List<TPLInterview>();
 
     [InverseProperty("Employee")]
     public virtual ICollection<TPLLeaveBalance> TPLLeaveBalances { get; set; } = new List<TPLLeaveBalance>();
@@ -73,8 +64,7 @@ public partial class TPLEmployee
     [InverseProperty("Employee")]
     public virtual ICollection<TPLOnboarding> TPLOnboardings { get; set; } = new List<TPLOnboarding>();
 
-    [InverseProperty("Employee")]
-    public virtual ICollection<TPLPerformanceEvaluation> TPLPerformanceEvaluations { get; set; } = new List<TPLPerformanceEvaluation>();
+  
 
     [InverseProperty("employee")]
     public virtual ICollection<TPLPermission> TPLPermissions { get; set; } = new List<TPLPermission>();
@@ -86,11 +76,6 @@ public partial class TPLEmployee
     [InverseProperty("employee")]
     public virtual ICollection<TPLRequest> TPLRequests { get; set; } = new List<TPLRequest>();
 
-    [InverseProperty("Employee")]
-    public virtual ICollection<TPLSelfServiceRequest> TPLSelfServiceRequests { get; set; } = new List<TPLSelfServiceRequest>();
-
-    [InverseProperty("Employee")]
-    public virtual ICollection<TPLSurvey_Response> TPLSurvey_Responses { get; set; } = new List<TPLSurvey_Response>();
 
     [InverseProperty("Employee")]
     public virtual TPLUser TPLUser { get; set; }

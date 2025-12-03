@@ -6,7 +6,9 @@ using HRSystem.Infrastructure.Implementations;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Threading.Tasks;
+using static System.Net.Mime.MediaTypeNames;
 
 public class TPLProjectAssignmentRepository : GenericRepository<TPLProjectAssignment>, ITPLProjectAssignmentRepository
 {
@@ -53,7 +55,7 @@ public class TPLProjectAssignmentRepository : GenericRepository<TPLProjectAssign
         }
 
         return await _context.Set<TPLProjectAssignment>()
-            .FirstOrDefaultAsync(a => a.AssignmentID == assignmentId);
+            .FirstOrDefaultAsync(a => a.assignment_id == assignmentId);
     }
 
     public async Task<IEnumerable<TPLProjectAssignment>> GetAssignmentsByEmployeeIdAsync(int employeeId)

@@ -4,75 +4,48 @@ using AutoMapper;
 using HRSystem.BaseLibrary.DTOs;
 using HRSystem.Infrastructure.Contracts;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc; 
 using System.Security.Claims;
 using System.Threading.Tasks;
 
 [Route("api/[controller]")]
 [ApiController]
-[Authorize] 
+[Authorize]
 public class PermissionRequestController : ControllerBase
 {
+    // ... Declarations and Constructor
     private readonly IPermissionManagementService _permissionService;
     private readonly IMapper _mapper;
+    private readonly IPermissionRepository _permissionRepo;
 
-    public PermissionRequestController(IPermissionManagementService permissionService, IMapper mapper)
+    public PermissionRequestController(IPermissionManagementService permissionService, IMapper mapper, IPermissionRepository permissionRepo)
     {
         _permissionService = permissionService;
         _mapper = mapper;
+        _permissionRepo = permissionRepo;
     }
 
-    // Helper to get the current User ID from the JWT Token
+    // Helper to get the current Employee ID (Keep this inside)
     private int GetCurrentUserId()
     {
-        // 1. البحث عن الـ Claim المخصص "EmployeeID"
         var employeeIdClaim = User.FindFirst("EmployeeID")?.Value;
-
-        // 2. محاولة تحويله إلى رقم صحيح
-        if (int.TryParse(employeeIdClaim, out int employeeId))
-        {
-            // هذا يضمن أننا نستخدم 202410 بدلاً من 107
-            return employeeId;
-        }
-
-        // 3. التعامل مع حالة الـ ID غير الصالح أو المفقود
+        if (int.TryParse(employeeIdClaim, out int employeeId)) return employeeId;
         throw new UnauthorizedAccessException("Employee ID claim is missing or invalid in the token.");
     }
 
     // ----------------------------------------------------------------------
-    // 1. POST: Submit New Permission Request (Employee Action)
-    // (Calls ProcessNewPermissionRequestAsync which handles auto-check)
+    // 5. GET: Get ALL Permission Requests (HR/Admin Audit View)
     // ----------------------------------------------------------------------
-    [HttpPost]
-    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(PermissionReadDto))]
-    [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<IActionResult> SubmitPermissionRequest([FromBody] PermissionCreateDto dto)
+    [HttpGet]
+    [Authorize(Roles = "admin,HR")]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<PermissionReadDto>))]
+    public async Task<IActionResult> GetAllPermissionRequests()
     {
-        try
-        {
-            // Use Employee ID from the token for security
-            dto.EmployeeId = GetCurrentUserId();
-
-            var result = await _permissionService.ProcessNewPermissionRequestAsync(dto);
-
-            // If auto-rejected due to exceeding limits, return error
-            if (result.Status.StartsWith("AutoRejected"))
-            {
-                return BadRequest(new { Message = "Request automatically rejected: " + result.Status, Status = result.Status });
-            }
-
-            // Status is Pending - Manager Notification Logic executed in Service
-            return Ok(result);
-        }
-        catch (ArgumentException ex)
-        {
-            return BadRequest(new { Message = ex.Message });
-        }
-        catch (InvalidOperationException ex)
-        {
-            return BadRequest(new { Message = ex.Message }); // Handles overlap checks
-        }
+        var entities = await _permissionRepo.GetAllAsync();
+        var dtos = _mapper.Map<IEnumerable<PermissionReadDto>>(entities);
+        return Ok(dtos);
     }
+
 
     // ----------------------------------------------------------------------
     // 2. GET: Get Request Details
@@ -91,21 +64,18 @@ public class PermissionRequestController : ControllerBase
     // 3. POST: Approve Request (Manager Action)
     // ----------------------------------------------------------------------
     [HttpPost("approve/{permissionId}")]
-    [Authorize(Roles = "admin,HR")] // 
+    [Authorize(Roles = "admin,HR")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> ApproveRequest(int permissionId)
     {
         int managerId = GetCurrentUserId();
-
         bool success = await _permissionService.ApprovePermissionRequestAsync(permissionId, managerId);
 
         if (success)
         {
             return Ok(new { Message = "Permission request approved successfully." });
         }
-
-        // This handles cases where status is not 'Pending' or request is not found
         return BadRequest(new { Message = "Could not approve request. It may already be processed or not exist." });
     }
 
@@ -119,14 +89,12 @@ public class PermissionRequestController : ControllerBase
     public async Task<IActionResult> RejectRequest(int permissionId)
     {
         int managerId = GetCurrentUserId();
-
         bool success = await _permissionService.RejectPermissionRequestAsync(permissionId, managerId);
 
         if (success)
         {
             return Ok(new { Message = "Permission request rejected successfully." });
         }
-
         return BadRequest(new { Message = "Could not reject request. It may already be processed or not exist." });
     }
-}
+} 

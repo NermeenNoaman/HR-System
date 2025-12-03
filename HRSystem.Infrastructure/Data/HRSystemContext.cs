@@ -22,38 +22,26 @@ public partial class HRSystemContext : DbContext
 
     public virtual DbSet<LKPPermissionType> LKPPermissionTypes { get; set; }
 
-    public virtual DbSet<LKPSalary> LKPSalaries { get; set; }
-
-    public virtual DbSet<LkpBenefitType> LkpBenefitTypes { get; set; }
-
     public virtual DbSet<LkpGeneralDataBranch> LkpGeneralDataBranches { get; set; }
 
     public virtual DbSet<LkpGeneralDataCompanyProfile> LkpGeneralDataCompanyProfiles { get; set; }
 
     public virtual DbSet<LkpHRDepartment> LkpHRDepartments { get; set; }
 
-    public virtual DbSet<LkpJobApplication> LkpJobApplications { get; set; }
 
     public virtual DbSet<TPLAssetManagement> TPLAssetManagements { get; set; }
 
     public virtual DbSet<TPLAttendance> TPLAttendances { get; set; }
 
-    public virtual DbSet<TPLBenefitsCompensation> TPLBenefitsCompensations { get; set; }
-
-    public virtual DbSet<TPLCVBank> TPLCVBanks { get; set; }
-
-    public virtual DbSet<TPLCandidate> TPLCandidates { get; set; }
 
 
-    public virtual DbSet<TPLDocumentManagement> TPLDocumentManagements { get; set; }
+
+
 
     public virtual DbSet<TPLEmployee> TPLEmployees { get; set; }
 
-    public virtual DbSet<TPLEvaluationCriterion> TPLEvaluationCriteria { get; set; }
 
-    public virtual DbSet<TPLHRNeedRequest> TPLHRNeedRequests { get; set; }
 
-    public virtual DbSet<TPLInterview> TPLInterviews { get; set; }
 
     public virtual DbSet<TPLJob> TPLJobs { get; set; }
 
@@ -65,7 +53,6 @@ public partial class HRSystemContext : DbContext
 
     public virtual DbSet<TPLOnboarding> TPLOnboardings { get; set; }
 
-    public virtual DbSet<TPLPerformanceEvaluation> TPLPerformanceEvaluations { get; set; }
 
     public virtual DbSet<TPLPermission> TPLPermissions { get; set; }
 
@@ -73,15 +60,11 @@ public partial class HRSystemContext : DbContext
 
     public virtual DbSet<TPLProjectAssignment> TPLProject_Assignments { get; set; }
 
-    public virtual DbSet<TPLRecruitmentPortal> TPLRecruitmentPortals { get; set; }
 
     public virtual DbSet<TPLRequest> TPLRequests { get; set; }
 
-    public virtual DbSet<TPLSelfServiceRequest> TPLSelfServiceRequests { get; set; }
 
-    public virtual DbSet<TPLSurvey> TPLSurveys { get; set; }
 
-    public virtual DbSet<TPLSurvey_Response> TPLSurvey_Responses { get; set; }
 
     public virtual DbSet<TPLTraining> TPLTrainings { get; set; }
 
@@ -103,21 +86,9 @@ public partial class HRSystemContext : DbContext
             entity.Property(e => e.permission_type_id).ValueGeneratedOnAdd();
         });
 
-        modelBuilder.Entity<LKPSalary>(entity =>
-        {
-            entity.HasKey(e => e.SalaryID).HasName("PK__LKPSalar__4BE204B719479BCC");
+       
 
-            entity.Property(e => e.SalaryID).ValueGeneratedOnAdd();
-
-            entity.HasOne(d => d.Employee).WithMany(p => p.LKPSalaries)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_LKPSalary_TPLEmployee");
-        });
-
-        modelBuilder.Entity<LkpBenefitType>(entity =>
-        {
-            entity.Property(e => e.BenefitTypeID).ValueGeneratedOnAdd();
-        });
+        
 
         modelBuilder.Entity<LkpGeneralDataBranch>(entity =>
         {
@@ -144,13 +115,6 @@ public partial class HRSystemContext : DbContext
                 .HasConstraintName("FK_LkpHRDepartments_LkpGeneralDataBranches");
         });
 
-        modelBuilder.Entity<LkpJobApplication>(entity =>
-        {
-            entity.Property(e => e.JobApplicationId).ValueGeneratedOnAdd();
-            entity.Property(e => e.Email).IsFixedLength();
-
-            entity.HasOne(d => d.CV).WithMany(p => p.LkpJobApplications).HasConstraintName("FK_LkpJobApplication_TPLCVBank");
-        });
 
         modelBuilder.Entity<TPLAssetManagement>(entity =>
         {
@@ -178,49 +142,7 @@ public partial class HRSystemContext : DbContext
                 .HasConstraintName("FK_TPLAttendance_TPLEmployee");
         });
 
-        modelBuilder.Entity<TPLBenefitsCompensation>(entity =>
-        {
-            entity.HasKey(e => e.BenefitID).HasName("PK__Benefits__5754C53AEB6B105B");
-
-            entity.Property(e => e.BenefitID).ValueGeneratedOnAdd();
-
-            entity.HasOne(d => d.BenefitType).WithMany(p => p.TPLBenefitsCompensations)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_TPLBenefitsCompensation_LkpBenefitTypes");
-
-            entity.HasOne(d => d.Employee).WithMany(p => p.TPLBenefitsCompensations)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_TPLBenefitsCompensation_TPLEmployee");
-        });
-
-        modelBuilder.Entity<TPLCVBank>(entity =>
-        {
-            entity.Property(e => e.CV_ID).ValueGeneratedOnAdd();
-        });
-
-        modelBuilder.Entity<TPLCandidate>(entity =>
-        {
-            entity.HasKey(e => e.CandidateID).HasName("PK__TPLCandi__DF539BFC3A8F1883");
-
-            entity.Property(e => e.CandidateID).ValueGeneratedOnAdd();
-
-            entity.HasOne(d => d.JobApplication).WithMany(p => p.TPLCandidates)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_TPLCandidate_LkpJobApplication");
-        });
-
        
-
-        modelBuilder.Entity<TPLDocumentManagement>(entity =>
-        {
-            entity.HasKey(e => e.DocumentID).HasName("PK__TPLDocum__1ABEEF6F44C1B7DC");
-
-            entity.Property(e => e.DocumentID).ValueGeneratedOnAdd();
-
-            entity.HasOne(d => d.Employee).WithMany(p => p.TPLDocumentManagements)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_TPLDocumentManagement_Employee");
-        });
 
         modelBuilder.Entity<TPLEmployee>(entity =>
         {
@@ -237,36 +159,7 @@ public partial class HRSystemContext : DbContext
                 .HasConstraintName("FK_TPLEmployee_Job");
         });
 
-        modelBuilder.Entity<TPLEvaluationCriterion>(entity =>
-        {
-            entity.Property(e => e.CriteriaID).ValueGeneratedOnAdd();
-        });
-
-        modelBuilder.Entity<TPLHRNeedRequest>(entity =>
-        {
-            entity.HasKey(e => e.HRNeedID).HasName("PK_HRNeedRequests");
-
-            entity.Property(e => e.HRNeedID).ValueGeneratedOnAdd();
-
-            entity.HasOne(d => d.Department).WithMany(p => p.TPLHRNeedRequests)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_TPLHRNeedRequests_LkpHRDepartments");
-        });
-
-        modelBuilder.Entity<TPLInterview>(entity =>
-        {
-            entity.HasKey(e => e.InterviewID).HasName("PK__Intervie__C97C5832B0092694");
-
-            entity.Property(e => e.InterviewID).ValueGeneratedOnAdd();
-
-            entity.HasOne(d => d.Candidate).WithMany(p => p.TPLInterviews)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_TPLInterview_TPLCandidate");
-
-            entity.HasOne(d => d.Interviewer).WithMany(p => p.TPLInterviews)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_TPLInterview_TPLEmployee1");
-        });
+       
 
         modelBuilder.Entity<TPLJob>(entity =>
         {
@@ -315,20 +208,7 @@ public partial class HRSystemContext : DbContext
                 .HasConstraintName("FK_TPLOnboarding_TPLEmployee");
         });
 
-        modelBuilder.Entity<TPLPerformanceEvaluation>(entity =>
-        {
-            entity.HasKey(e => e.EvaluationID).HasName("PK__TPLPerfo__36AE68D36D7296F8");
-
-            entity.Property(e => e.EvaluationID).ValueGeneratedOnAdd();
-
-            entity.HasOne(d => d.Criteria).WithMany(p => p.TPLPerformanceEvaluations)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_TPLPerformanceEvaluation_TPLEvaluationCriteria");
-
-            entity.HasOne(d => d.Employee).WithMany(p => p.TPLPerformanceEvaluations)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_TPLPerformanceEvaluation_TPLEmployee2");
-        });
+       
 
         modelBuilder.Entity<TPLPermission>(entity =>
         {
@@ -353,16 +233,6 @@ public partial class HRSystemContext : DbContext
         });
 
 
-        modelBuilder.Entity<TPLRecruitmentPortal>(entity =>
-        {
-            entity.HasKey(e => e.PortalID).HasName("PK__TPLRecru__B87D58338DAADC9C");
-
-            entity.Property(e => e.PortalID).ValueGeneratedOnAdd();
-
-            entity.HasOne(d => d.HRNeed).WithMany(p => p.TPLRecruitmentPortals)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_TPLRecruitmentPortal_TPLHRNeedRequests");
-        });
 
         modelBuilder.Entity<TPLRequest>(entity =>
         {
@@ -377,38 +247,7 @@ public partial class HRSystemContext : DbContext
                 .HasConstraintName("FK_TPLRequests_LKPLeaveTypes");
         });
 
-        modelBuilder.Entity<TPLSelfServiceRequest>(entity =>
-        {
-            entity.HasKey(e => e.RequestID).HasName("PK__TPLSelfS__33A8519A2AA9D005");
 
-            entity.Property(e => e.RequestID).ValueGeneratedOnAdd();
-
-            entity.HasOne(d => d.Employee).WithMany(p => p.TPLSelfServiceRequests)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_TPLSelfServiceRequests_TPLEmployee");
-        });
-
-        modelBuilder.Entity<TPLSurvey>(entity =>
-        {
-            entity.HasKey(e => e.SurveyID).HasName("PK__TPLSurve__A5481F9D7B7BA7D2");
-
-            entity.Property(e => e.SurveyID).ValueGeneratedOnAdd();
-        });
-
-        modelBuilder.Entity<TPLSurvey_Response>(entity =>
-        {
-            entity.HasKey(e => e.ResponseID).HasName("PK__TPLSurve__1AAA640CF9F8B7BF");
-
-            entity.Property(e => e.ResponseID).ValueGeneratedOnAdd();
-
-            entity.HasOne(d => d.Employee).WithMany(p => p.TPLSurvey_Responses)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_TPLSurvey_Response_TPLEmployee");
-
-            entity.HasOne(d => d.Survey).WithMany(p => p.TPLSurvey_Responses)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK__TPLSurvey__Surve__31B762FC");
-        });
 
         modelBuilder.Entity<TPLTraining>(entity =>
         {

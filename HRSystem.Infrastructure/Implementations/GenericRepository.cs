@@ -61,8 +61,10 @@ namespace HRSystem.Infrastructure.Implementations
         // Update operations
         public virtual async Task UpdateAsync(T entity)
         {
-            _dbSet.Update(entity);
-            await Task.CompletedTask;
+            _dbSet.Attach(entity);
+            _context.Entry(entity).State = EntityState.Modified; 
+
+            await Task.CompletedTask; 
         }
 
         public virtual async Task UpdateRangeAsync(IEnumerable<T> entities)

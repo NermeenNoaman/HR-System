@@ -103,6 +103,7 @@ public class LeaveTypeController : ControllerBase
         _mapper.Map(dto, existingEntity);
 
         await _leaveTypeRepo.UpdateAsync(existingEntity);
+        await _leaveTypeRepo.SaveChangesAsync();
 
         return NoContent(); // 204 No Content for successful update
     }

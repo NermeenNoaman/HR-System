@@ -45,41 +45,7 @@ namespace HRSystem_Wizer_
             builder.Services.AddScoped<ITPLEmployeeRepository, TPLEmployeeRepository>();
             builder.Services.AddScoped<ILeaveManagementService, LeaveManagementService>();
 
-            // Register repositories for the 16 entities
-            builder.Services.AddScoped<ISelfServiceRequestRepository, SelfServiceRequestRepository>();
-            builder.Services.AddScoped<IDocumentManagementRepository, DocumentManagementRepository>();
-            builder.Services.AddScoped<IBenefitsCompensationRepository, BenefitsCompensationRepository>();
-            builder.Services.AddScoped<IBenefitTypeRepository, BenefitTypeRepository>();
-            builder.Services.AddScoped<ISalaryRepository, SalaryRepository>();
-            builder.Services.AddScoped<IPerformanceEvaluationRepository, PerformanceEvaluationRepository>();
-            builder.Services.AddScoped<IEvaluationCriteriaRepository, EvaluationCriteriaRepository>();
-            builder.Services.AddScoped<ISurveyRepository, SurveyRepository>();
-            builder.Services.AddScoped<ISurveyResponseRepository, SurveyResponseRepository>();
-            builder.Services.AddScoped<IJobRepository, JobRepository>();
-            builder.Services.AddScoped<IHRNeedRequestRepository, HRNeedRequestRepository>();
-            builder.Services.AddScoped<IRecruitmentPortalRepository, RecruitmentPortalRepository>();
-            builder.Services.AddScoped<ICVBankRepository, CVBankRepository>();
-            builder.Services.AddScoped<IJobApplicationRepository, JobApplicationRepository>();
-            builder.Services.AddScoped<ICandidateRepository, CandidateRepository>();
-            builder.Services.AddScoped<IInterviewRepository, InterviewRepository>();
-
-            // Register services for the 16 entities
-            builder.Services.AddScoped<ISelfServiceRequestService, SelfServiceRequestService>();
-            builder.Services.AddScoped<IDocumentManagementService, DocumentManagementService>();
-            builder.Services.AddScoped<IBenefitsCompensationService, BenefitsCompensationService>();
-            builder.Services.AddScoped<IBenefitTypeService, BenefitTypeService>();
-            builder.Services.AddScoped<ISalaryService, SalaryService>();
-            builder.Services.AddScoped<IPerformanceEvaluationService, PerformanceEvaluationService>();
-            builder.Services.AddScoped<IEvaluationCriteriaService, EvaluationCriteriaService>();
-            builder.Services.AddScoped<ISurveyService, SurveyService>();
-            builder.Services.AddScoped<ISurveyResponseService, SurveyResponseService>();
-            builder.Services.AddScoped<IJobService, JobService>();
-            builder.Services.AddScoped<IHRNeedRequestService, HRNeedRequestService>();
-            builder.Services.AddScoped<IRecruitmentPortalService, RecruitmentPortalService>();
-            builder.Services.AddScoped<ICVBankService, CVBankService>();
-            builder.Services.AddScoped<IJobApplicationService, JobApplicationService>();
-            builder.Services.AddScoped<ICandidateService, CandidateService>();
-            builder.Services.AddScoped<IInterviewService, InterviewService>();
+            
 
             builder.Services.AddScoped<IAttendanceRepository, TPLAttendanceRepository>();
             builder.Services.AddScoped<IPermissionRepository, TPLPermissionRepository>();

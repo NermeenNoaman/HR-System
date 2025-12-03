@@ -11,7 +11,7 @@ public partial class TPLProjectAssignment
 {
     [Key]
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-    public int AssignmentID { get; set; } 
+    public int assignment_id { get; set; } 
 
     // Foreign Keys (EmployeeID and ProjectID are NOT identity columns)
     [Required]
