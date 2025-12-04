@@ -49,6 +49,20 @@ namespace HRSystem_Wizer_
             builder.Services.AddScoped<ITPLEmployeeRepository, TPLEmployeeRepository>();
             builder.Services.AddScoped<ILeaveManagementService, LeaveManagementService>();
 
+            
+
+            builder.Services.AddScoped<IAttendanceRepository, TPLAttendanceRepository>();
+            builder.Services.AddScoped<IPermissionRepository, TPLPermissionRepository>();
+            builder.Services.AddScoped<IPermissionTypeRepository, LKPPermissionTypeRepository>();
+            builder.Services.AddScoped<IPermissionManagementService, PermissionManagementService>();
+            builder.Services.AddScoped<ITPLTrainingRepository, TPLTrainingRepository>();
+            builder.Services.AddScoped<ITPLProjectRepository, TPLProjectRepository>();
+            builder.Services.AddScoped<ITPLProjectAssignmentRepository, TPLProjectAssignmentRepository>();
+            builder.Services.AddScoped<ITPLOnboardingRepository, TPLOnboardingRepository>();
+            builder.Services.AddScoped<ITPLOffboardingRepository, TPLOffboardingRepository>();
+            builder.Services.AddScoped<ITPLAssetManagementRepository, TPLAssetManagementRepository>();
+
+
             // Register 16 entities' repositories for DI (already present or to be plugged in)
             builder.Services.AddScoped<ISelfServiceRequestRepository, SelfServiceRequestRepository>();
             builder.Services.AddScoped<IDocumentManagementRepository, DocumentManagementRepository>();
