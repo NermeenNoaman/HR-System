@@ -50,7 +50,7 @@ public class LeaveLogController : ControllerBase
         if (userRole != "admin" && userRole != "HR")
         {
             // إذا كان المستخدم ليس مديراً، يجب أن يكون ID المطلوب هو IDه الخاص
-            if (loggedInEmployeeIdClaim == null || int.Parse(loggedInEmployeeIdClaim) != id)
+            if (loggedInEmployeeIdClaim == null || int.Parse(loggedInEmployeeIdClaim) != employeeId)
             {
                 // منع الوصول: الموظف العادي يحاول رؤية ملف زميله
                 return Forbid(); // 403 Forbidden
