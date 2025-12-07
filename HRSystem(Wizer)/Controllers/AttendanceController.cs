@@ -1,4 +1,3 @@
-﻿// In HRSystem(Wizer)/Controllers/AttendanceController.cs
 
 using AutoMapper;
 using HRSystem.BaseLibrary.DTOs;
@@ -17,16 +16,15 @@ public class AttendanceController : ControllerBase
 {
     private readonly IAttendanceRepository _attendanceRepo;
     private readonly IMapper _mapper;
+    private readonly ITPLEmployeeRepository _employeeRepo;
+    private readonly IUserRepository _userRepo;
 
-    // Constants for Geo-Fencing (These should ideally be read from a config table)
-    private const double CompanyLatitude = 31.204805;    // Office Central Latitude
-    private const double CompanyLongitude = 29.939055;   // Office Central Longitude
-    private const double AllowedRadiusInMeters = 500.0; // Allowed range (500 meters)
-
-    public AttendanceController(IAttendanceRepository attendanceRepo, IMapper mapper)
+    public AttendanceController(IAttendanceRepository attendanceRepo, IMapper mapper, ITPLEmployeeRepository employeeRepo, IUserRepository userRepo)
     {
         _attendanceRepo = attendanceRepo;
         _mapper = mapper;
+        _employeeRepo = employeeRepo;
+        _userRepo = userRepo;
     }
 
     private int GetCurrentUserId()
@@ -37,57 +35,46 @@ public class AttendanceController : ControllerBase
     }
 
     // ----------------------------------------------------------------------
-    // 1. POST: Check-In (Geo-Fencing Logic)
+    // 1. POST: Check-In (Final Simplified Logic - No Request Body)
     // ----------------------------------------------------------------------
     [HttpPost("checkin")]
     [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(AttendanceReadDto))]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<IActionResult> CheckIn([FromBody] AttendanceCreateDto dto)
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    // 🟢 STEP 1: Eliminate [FromBody] DTO - The request has no body.
+    public async Task<IActionResult> CheckIn()
     {
         try
         {
-            dto.EmployeeID = GetCurrentUserId();
-            var currentDate = DateTime.Now;
+            // 1. Get Security/Time Data
+            var currentUserId = GetCurrentUserId();
+            var currentDate = DateTime.Now.Date;
 
-            // A. Check if already checked in today
-            var existingRecord = await _attendanceRepo.GetTodayAttendanceRecordAsync(dto.EmployeeID, currentDate);
+            // 2. Security Check & ID Mapping: Map User ID (from token) to actual Employee ID
+            var userRecord = await _userRepo.GetByIdAsync(currentUserId);
+            if (userRecord == null)
+            {
+                return NotFound(new { Message = $"Check-in failed. User ID {currentUserId} does not exist in the user database." });
+            }
+            var actualEmployeeId = userRecord.EmployeeID;
+
+            // 3. Prevent Duplicates: Check for an active Check-In today
+            var existingRecord = await _attendanceRepo.GetTodayAttendanceRecordAsync(actualEmployeeId, currentDate);
             if (existingRecord != null)
             {
-                return BadRequest(new { Message = "You have already checked in today. Please use the CheckOut endpoint." });
+                return BadRequest(new { Message = "You have already checked in today." });
             }
 
-            // B. Geo-Fencing Check (Core Logic)
-            if (!dto.CheckInLatitude.HasValue || !dto.CheckInLongitude.HasValue)
+            // 4. Create and Record Entity
+            // 🟢 STEP 2: Manually create the Entity without using AutoMapper on an input DTO
+            var entity = new TPLAttendance
             {
-                // Handle case where location services are off (Optional: Allow checkin for remote workers)
-                return BadRequest(new { Message = "Location services must be enabled for Check-In." });
-            }
-
-            double latitude = (double)dto.CheckInLatitude.Value;
-            double longitude = (double)dto.CheckInLongitude.Value;
-
-            if (latitude == 0 && longitude == 0)
-            {
-                return BadRequest(new { Message = "Location coordinates are invalid." });
-            }
-
-            double distance = CalculateDistance(
-                CompanyLatitude,
-                CompanyLongitude,
-                latitude,
-                longitude
-            );
-
-            if (distance > AllowedRadiusInMeters)
-            {
-                return BadRequest(new { Message = $"Check-in failed. You are {distance:F2}m away, which is outside the allowed {AllowedRadiusInMeters}m radius." });
-            }
-
-            // C. Record CheckIn
-            var entity = _mapper.Map<TPLAttendance>(dto);
-            entity.Date = currentDate;
-            entity.CheckIn = DateTime.Now;
-            entity.Status = "Present";
+                EmployeeID = actualEmployeeId,
+                Date = currentDate,
+                CheckIn = DateTime.Now.TimeOfDay, // Record current time only
+                Status = "Present",
+                CheckOut = null                   // Must be NULL for an active record
+            };
 
             var createdEntity = await _attendanceRepo.AddAsync(entity);
             var createdDto = _mapper.Map<AttendanceReadDto>(createdEntity);
@@ -101,25 +88,36 @@ public class AttendanceController : ControllerBase
     }
 
     // ----------------------------------------------------------------------
-    // 2. POST: Check-Out
+    // 2. POST: Check-Out (No Request Body needed)
     // ----------------------------------------------------------------------
     [HttpPost("checkout")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> CheckOut()
     {
-        int employeeId = GetCurrentUserId();
-        var currentDate = DateTime.Now;
-        var currentTime = DateTime.Now;
+        // 1. Get Security/Time Data
+        int currentUserId = GetCurrentUserId();
+        var currentDate = DateTime.Now.Date;
+        var currentTimeSpan = DateTime.Now.TimeOfDay;
 
-        var existingRecord = await _attendanceRepo.GetTodayAttendanceRecordAsync(employeeId, currentDate);
+        // 2. Security Check & ID Mapping
+        var userRecord = await _userRepo.GetByIdAsync(currentUserId);
+        if (userRecord == null)
+        {
+            return NotFound(new { Message = $"Check-out failed. User ID {currentUserId} not found in user records." });
+        }
+        int actualEmployeeId = userRecord.EmployeeID;
+
+        // 3. Search for the active attendance record
+        var existingRecord = await _attendanceRepo.GetTodayAttendanceRecordAsync(actualEmployeeId, currentDate);
 
         if (existingRecord == null)
         {
             return NotFound(new { Message = "No active check-in record found for today." });
         }
 
-        bool success = await _attendanceRepo.RecordCheckOutAsync(existingRecord.AttendanceID, currentTime);
+        // 4. Record Check-Out Time
+        bool success = await _attendanceRepo.RecordCheckOutAsync(existingRecord.AttendanceID, currentTimeSpan);
 
         if (success)
         {
@@ -129,7 +127,37 @@ public class AttendanceController : ControllerBase
     }
 
     // ----------------------------------------------------------------------
-    // 3. GET: Get Attendance Record by ID (for HR/Admin view)
+    // 3. GET: Get All Attendance Records (for HR/Admin view)
+    // ----------------------------------------------------------------------
+    [HttpGet]
+    [Route("all")] // 👈🏻 New route: /api/Attendance/all
+    [Authorize(Roles = "HR,admin")] // 👈🏻 Security: Only HR or Admin can view all records
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<AttendanceReadDto>))]
+    public async Task<IActionResult> GetAllAttendance()
+    {
+        try
+        {
+            // Get all entities using the generic repository method
+            var entities = await _attendanceRepo.GetAllAsync();
+
+            if (entities == null || !entities.Any())
+            {
+                return NotFound(new { Message = "No attendance records found." });
+            }
+
+            // Map the list of entities to the list of DTOs for client consumption
+            var dtoList = _mapper.Map<IEnumerable<AttendanceReadDto>>(entities);
+
+            return Ok(dtoList);
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(new { Message = "Failed to retrieve attendance records: " + ex.Message });
+        }
+    }
+
+    // ----------------------------------------------------------------------
+    // 4. GET: Get Attendance Record by ID (for HR/Admin view)
     // ----------------------------------------------------------------------
     [HttpGet("{id}")]
     [Authorize(Roles = "HR,admin")]
