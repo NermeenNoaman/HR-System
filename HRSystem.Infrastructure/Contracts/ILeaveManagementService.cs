@@ -1,4 +1,4 @@
-﻿// In HRSystem.Core/Services/ILeaveManagementService.cs (or appropriate contracts folder)
+// In HRSystem.Core/Services/ILeaveManagementService.cs (or appropriate contracts folder)
 using HRSystem.BaseLibrary.DTOs; // We use DTOs here to decouple from Entities
 using System.Threading.Tasks;
 
@@ -18,6 +18,6 @@ namespace HRSystem.Core.Services
         Task<bool> RejectLeaveRequestAsync(int requestId, int managerId);
 
         // Helper function required by the UI to check status
-        Task<RequestReadDto> GetRequestByIdAsync(int requestId);
+        Task<IEnumerable<RequestReadDto>> GetAllRequestsAsync();
     }
 }
